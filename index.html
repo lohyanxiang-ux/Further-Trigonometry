@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Further Trigonometry Skill Practices</title>
+    <style>
+        /* CSS Reset & Variables */
+        * {
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --primary-color: #2b579a;
+            --secondary-color: #e2e9f3;
+            --accent-color: #d24726;
+            --success-color: #107c41;
+            --text-color: #333333;
+            --bg-color: #f7f9fc;
+            --card-bg: #ffffff;
+            --border-color: #cccccc;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Math Text Formatting Typography */
+        .math-expr {
+            font-family: "Cambria", "Times New Roman", Times, serif;
+            font-size: 1.25rem;
+            line-height: 1.4;
+            display: inline-flex;
+            align-items: center;
+            vertical-align: middle;
+        }
+        .math-expr em {
+            font-style: italic;
+        }
+        
+        /* Native Stacked Fractional Elements */
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            padding: 0 4px;
+            font-size: 0.9em;
+        }
+        .frac-num {
+            border-bottom: 1.5px solid var(--text-color);
+            text-align: center;
+            padding-bottom: 1px;
+            width: 100%;
+            display: block;
+        }
+        .frac-den {
+            text-align: center;
+            padding-top: 1px;
+            width: 100%;
+            display: block;
+        }
+        sup {
+            font-size: 0.75em;
+            vertical-align: super;
+            line-height: 0;
+        }
+
+        /* Screen Architecture Layout Grid */
+        #app-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .score-counter {
+            display: flex;
+            gap: 15px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .score-correct { color: #4caf50; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; }
+        .score-wrong { color: #ff5722; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; }
+
+        .screen {
+            display: none;
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #menu-screen {
+            justify-content: center;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+
+        .menu-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .skill-btn {
+            width: 100%;
+            min-height: 65px;
+            background-color: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .skill-btn:active {
+            background-color: var(--secondary-color);
+        }
+        .skill-btn.disabled {
+            border-color: var(--border-color);
+            color: #999999;
+            cursor: not-allowed;
+            background-color: #eaeaea;
+        }
+
+        /* Trainer Screen Architecture Grid */
+        #trainer-screen {
+            display: none;
+            gap: 15px;
+        }
+        #trainer-screen.active {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            grid-template-rows: auto 1fr;
+        }
+
+        /* Combined Control Header Overlay Workspace */
+        .drawing-toolbar-container {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            gap: 10px;
+            z-index: 10;
+        }
+        .toolbar-left-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .drawing-toolbar-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #555;
+            text-transform: uppercase;
+        }
+        .drawing-toolbar-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .tool-btn {
+            min-width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Workspace Wrapper */
+        .workspace-panel-wrapper {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+            position: relative;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .workspace-panel {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Right Panel: Houses Keypad + Primary Contextual Buttons underneath */
+        .keyboard-panel {
+            grid-column: 2 / 3;
+            grid-row: 1 / 3;
+            background: #eef2f7;
+            border-left: 1px solid var(--border-color);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: flex-start;
+            z-index: 10;
+        }
+
+        /* Layout Detail Components */
+        .question-card {
+            background: #fafafa;
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+        }
+
+        /* The canvas is confined strictly within this interactive diagram block */
+.interactive-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            min-height: 200px;
+            margin: 10px 0;
+            position: relative; /* Local context for absolute canvas */
+            overflow: visible;
+        }
+
+.interactive-diagram svg, 
+#question-workspace svg {
+    overflow: visible !important;
+    width: 50% !important;
+    max-width: 50% !important;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+        /* Virtual Inputs Framework */
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: #f0f4f8;
+            border-radius: 6px;
+        }
+
+        .virtual-input-box {
+            min-width: 130px;
+            min-height: 50px;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 4px 10px;
+            cursor: pointer;
+            position: relative;
+            gap: 4px;
+        }
+        .virtual-input-box.focused {
+            border-color: var(--primary-color);
+            background-color: #f6f9ff;
+            box-shadow: 0 0 0 3px rgba(43, 87, 154, 0.2);
+        }
+
+        .fraction-side-minus {
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding-right: 2px;
+            display: inline-block;
+        }
+
+        .fraction-input-wrapper {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90px;
+            margin: 2px;
+        }
+        .fraction-input-subbox {
+            width: 100%;
+            min-height: 28px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.15rem;
+            border-radius: 4px;
+            padding: 2px;
+            transition: background 0.15s;
+        }
+        .fraction-input-subbox.focused-sub {
+            background-color: #dbe6f5;
+            box-shadow: inset 0 0 0 1.5px var(--primary-color);
+        }
+        .fraction-input-line {
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-color);
+            margin: 4px 0;
+        }
+
+        .panel-actions-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            min-height: 48px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-hint { background-color: #ffc107; color: #212529; }
+        .btn-header-back { min-height: 38px; width: auto; font-size: 0.9rem; padding: 0 15px; background: #f1f3f5; border: 1px solid #ced4da; color: #495057; }
+        .btn:active { opacity: 0.85; }
+
+        .math-table {
+            border-collapse: collapse;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+        .math-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: center;
+        }
+
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .key {
+            min-height: 52px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .key:active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(0.96);
+        }
+        .key.action-key { background: #dcdcdc; font-size: 0.95rem; }
+        .key.fraction-trigger-key { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; font-size: 1.1rem; }
+        .key.submit-key { background: var(--success-color); color: white; grid-column: span 3; min-height: 54px; font-size: 1.1rem; }
+
+        .feedback-box {
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            margin-top: 15px;
+        }
+        .feedback-box.correct { display: block; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .feedback-box.wrong { display: block; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .working-display {
+            margin-top: 10px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 12px;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <header>
+            <h1 id="app-title">Further Trigonometry Skill Practices</h1>
+            <div class="score-counter">
+                <span class="score-correct">Correct: <span id="count-correct">0</span></span>
+                <span class="score-wrong">Wrong: <span id="count-wrong">0</span></span>
+            </div>
+        </header>
+
+        <div id="menu-screen" class="screen active">
+            <h2 class="menu-title">Select a Learning Subtopic</h2>
+            <button class="skill-btn" onclick="startTrainer(1)">
+                <span>1. Sine and Cosine of Obtuse/Supplementary Angles</span>
+                <span>➔</span>
+            </button>
+            <button class="skill-btn" onclick="startTrainer(2)">
+                <span>2. Area of Triangle using <span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span><em>ab</em> sin <em>C</em></span>
+                <span>➔</span>
+            </button>
+            <button class="skill-btn" onclick="startTrainer(3)">
+                <span>3. Applications of Sine Rule</span>
+                <span>➔</span>
+            </button>
+            <button class="skill-btn" onclick="startTrainer(4)">
+                <span>4. Applications of Cosine Rule</span>
+                <span>➔</span>
+            </button>
+        </div>
+
+        <div id="trainer-screen" class="screen">
+            
+            <div class="drawing-toolbar-container">
+                <div class="toolbar-left-group">
+                    <div class="drawing-toolbar-title">Canvas Scratchpad:</div>
+                    <div class="drawing-toolbar-buttons">
+                        <button class="tool-btn active" id="tool-interact" title="Interact Mode">👆</button>
+                        <button class="tool-btn" id="tool-pen" title="Stylus Pen">✏️</button>
+                        <button class="tool-btn" id="tool-eraser" title="Eraser Mode">🧽</button>
+                        <button class="tool-btn" id="tool-clear" title="Clear Canvas">❌</button>
+                    </div>
+                </div>
+                <button class="btn btn-header-back" onclick="exitToMenu()">🔙 Back to Topics</button>
+            </div>
+
+            <div class="workspace-panel-wrapper">
+                <div class="workspace-panel" id="question-workspace">
+                    </div>
+            </div>
+
+            <div class="keyboard-panel">
+                <h3 style="font-size: 0.9rem; color: #555; text-transform: uppercase; margin-bottom: 2px;">Keypad</h3>
+                <div class="keyboard-grid">
+                    <div class="key" data-val="1">1</div>
+                    <div class="key" data-val="2">2</div>
+                    <div class="key" data-val="3">3</div>
+                    <div class="key" data-val="4">4</div>
+                    <div class="key" data-val="5">5</div>
+                    <div class="key" data-val="6">6</div>
+                    <div class="key" data-val="7">7</div>
+                    <div class="key" data-val="8">8</div>
+                    <div class="key" data-val="9">9</div>
+                    <div class="key action-key" data-val="-">−</div>
+                    <div class="key" data-val="0">0</div>
+                    <div class="key action-key" data-val=".">.</div>
+                    <div class="key action-key" data-val="BACKSPACE">⌫</div>
+                    <div class="key action-key" data-val="CLEAR">C</div>
+                    <div class="key fraction-trigger-key" data-val="FRACTION" title="Fraction Setup">a/b</div>
+                    <div class="key submit-key" id="key-submit-answer" data-val="SUBMIT">Submit Answer</div>
+                </div>
+
+                <div class="panel-actions-wrapper">
+                    <button class="btn btn-hint" id="hint-trigger-btn" onclick="showQuestionHint()">Show Hint</button>
+                    <button class="btn btn-primary" id="next-question-btn" onclick="generateNextQuestion()" style="display:none; background-color: var(--success-color)">Next Challenge ➔</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // System Application State Properties Matrix
+        let currentSkill = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let currentQuestionData = null;
+        
+        let focusedInputId = null;        
+        let activeTextTarget = null;      
+
+        const PYTHAGOREAN_TRIPLES = [
+            {a: 3, b: 4, c: 5},
+            {a: 5, b: 12, c: 13},
+            {a: 8, b: 15, c: 17},
+            {a: 7, b: 24, c: 25}
+        ];
+
+        // App Initializations Lifecycle
+        window.addEventListener('DOMContentLoaded', () => {
+            initToolbarListeners();
+            initKeyboardFocusListeners();
+            setupSafariTouchPreventDefaults();
+        });
+
+        function setupSafariTouchPreventDefaults() {
+            document.addEventListener('touchmove', function(e) {
+                if (e.target.id === 'drawingCanvas' || document.getElementById('trainer-screen').classList.contains('active')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
+
+        function startTrainer(skillIndex) {
+            currentSkill = skillIndex;
+            document.getElementById('menu-screen').classList.remove('active');
+            document.getElementById('trainer-screen').classList.add('active');
+            generateNextQuestion();
+        }
+
+        function exitToMenu() {
+            document.getElementById('trainer-screen').classList.remove('active');
+            document.getElementById('menu-screen').classList.add('active');
+        }
+
+        // Analytical Mathematics Helpers Conversion Logic Modules
+        function formatTo3SF(num) {
+            if (num === 0) return "0.00";
+            const d = Math.ceil(Math.log10(Math.abs(num)));
+            const power = 3 - d;
+            const magnitude = Math.pow(10, power);
+            const shifted = Math.round(num * magnitude);
+            const rounded = shifted / magnitude;
+            return rounded.toPrecision(3);
+        }
+
+        function getGreatestCommonDivisor(x, y) {
+            return y ? getGreatestCommonDivisor(y, x % y) : Math.abs(x);
+        }
+
+// Precision Arc Mapping Algorithm with Adaptive Interior Label Positioning
+function getInteriorArc(vx, vy, r, p1x, p1y, p2x, p2y, color = "#8e24aa", label = "") {
+    // Angles of ray 1 and ray 2 from vertex (vx, vy)
+    const ang1 = Math.atan2(p1y - vy, p1x - vx);
+    const ang2 = Math.atan2(p2y - vy, p2x - vx);
+
+    // Calculate normalized angular difference for interior angle (<= 180 deg)
+    let diff = ang2 - ang1;
+    while (diff > Math.PI) diff -= 2 * Math.PI;
+    while (diff <= -Math.PI) diff += 2 * Math.PI;
+
+    // Arc start and end coordinates
+    const x1 = vx + r * Math.cos(ang1);
+    const y1 = vy + r * Math.sin(ang1);
+    const x2 = vx + r * Math.cos(ang2);
+    const y2 = vy + r * Math.sin(ang2);
+
+    const sweepFlag = diff > 0 ? 1 : 0;
+    const arcPath = `<path d="M ${x1} ${y1} A ${r} ${r} 0 0 ${sweepFlag} ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="2"/>`;
+
+    if (!label) return arcPath;
+
+    // Interior angle in degrees
+    const angleDeg = Math.abs(diff) * (180 / Math.PI);
+
+    // Adaptive label offset: tighter distance for sharper angles so text stays inside triangle legs
+    let offset = 12;
+    if (angleDeg < 60) {
+        offset = 9;
+    } else if (angleDeg < 80) {
+        offset = 11;
+    }
+
+    const bisector = ang1 + diff / 2;
+    const labelRadius = r + offset;
+    const lx = vx + labelRadius * Math.cos(bisector);
+    const ly = vy + labelRadius * Math.sin(bisector);
+
+    const fontSize = angleDeg < 60 ? 12 : 13;
+
+    const labelText = `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" fill="${color}" font-family="Cambria, 'Times New Roman', serif" font-size="${fontSize}" font-weight="bold" text-anchor="middle" dominant-baseline="central">${label}</text>`;
+
+    return arcPath + labelText;
+}
+
+        // Main Challenge Factory
+        function generateNextQuestion() {
+            focusedInputId = null;
+            activeTextTarget = null;
+            
+            document.getElementById('hint-trigger-btn').style.display = 'inline-flex';
+            document.getElementById('next-question-btn').style.display = 'none';
+            
+            const workspace = document.getElementById('question-workspace');
+            workspace.innerHTML = ''; 
+
+            if (currentSkill === 1) {
+                const typeRand = Math.floor(Math.random() * 3) + 1;
+                if (typeRand === 1) currentQuestionData = generateSkill1Type1Tabular();
+                else if (typeRand === 2) currentQuestionData = generateSkill1Type2Geometric();
+                else currentQuestionData = generateSkill1Type3Equation();
+            } else if (currentSkill === 2) {
+                const typeRand = Math.floor(Math.random() * 5) + 1;
+                if (typeRand === 1) currentQuestionData = generateSkill2Type1DirectDiagram();
+                else if (typeRand === 2) currentQuestionData = generateSkill2Type2IndirectAngle();
+                else if (typeRand === 3) currentQuestionData = generateSkill2Type3InverseObtuseAngle();
+                else if (typeRand === 4) currentQuestionData = generateSkill2Type4Parallelogram();
+                else currentQuestionData = generateSkill2Type5Rhombus();
+            } else if (currentSkill === 3) {
+                const typeRand = Math.floor(Math.random() * 3) + 1;
+                if (typeRand === 1) currentQuestionData = generateSkill3Type1();
+                else if (typeRand === 2) currentQuestionData = generateSkill3Type2();
+                else currentQuestionData = generateSkill3Type3();
+            } else if (currentSkill === 4) {
+                const typeRand = Math.floor(Math.random() * 5) + 1;
+                if (typeRand === 1) currentQuestionData = generateSkill4Type1SAS();
+                else if (typeRand === 2) currentQuestionData = generateSkill4Type2SSS();
+                else if (typeRand === 3) currentQuestionData = generateSkill4Type3Bearings();
+                else if (typeRand === 4) currentQuestionData = generateSkill4Type4Composite();
+                else currentQuestionData = generateSkill4Type5Algebraic();
+            }
+
+            // CRITICAL FIX: Append the constructed DOM element properly
+            workspace.appendChild(currentQuestionData.elementMarkup);
+            
+            // Inject strictly-contained annotation layer over the new diagram
+            initCanvasEngine();
+
+            const targets = workspace.querySelectorAll('.virtual-input-box');
+            if (targets.length > 0) {
+                setVirtualInputFocus(targets[0]);
+            }
+        }
+
+        // ==========================================
+        // SUBTOPIC SKILL 1 OBJECT INTERFACES MATRIX
+        // ==========================================
+
+function generateSkill1Type1Tabular() {
+    const angle1 = [35, 40, 45, 50][Math.floor(Math.random() * 4)];
+    const angle2 = [65, 70, 75, 80][Math.floor(Math.random() * 4)];
+    
+    const sin1 = formatTo3SF(Math.sin(angle1 * Math.PI / 180));
+    const cos1 = formatTo3SF(Math.cos(angle1 * Math.PI / 180));
+    const sin2 = formatTo3SF(Math.sin(angle2 * Math.PI / 180));
+    const cos2 = formatTo3SF(Math.cos(angle2 * Math.PI / 180));
+
+    const useAngle2 = Math.random() > 0.5;
+    const acuteBase = useAngle2 ? angle2 : angle1;
+    
+    // Always force an obtuse angle (> 90°)
+    const displayAngle = 180 - acuteBase;
+    const isSineMode = Math.random() > 0.5;
+
+    // sin(180° - θ) = +sin(θ)
+    // cos(180° - θ) = -cos(θ)
+    let expectedAnsStr = isSineMode ? (useAngle2 ? sin2 : sin1) : "-" + (useAngle2 ? cos2 : cos1);
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <p style="margin-bottom: 12px;">The table below shows the sine and cosine of some acute angles correct to 3 significant figures.</p>
+        <table class="math-table">
+            <tr>
+                <td><span class="math-expr">sin ${angle1}° = ${sin1}</span></td>
+                <td><span class="math-expr">cos ${angle1}° = ${cos1}</span></td>
+            </tr>
+            <tr>
+                <td><span class="math-expr">sin ${angle2}° = ${sin2}</span></td>
+                <td><span class="math-expr">cos ${angle2}° = ${cos2}</span></td>
+            </tr>
+        </table>
+        <p style="margin-top: 15px; margin-bottom: 12px;">Using suitable information from the table, find the value of <span class="math-expr"><strong>${isSineMode ? 'sin' : 'cos'} ${displayAngle}°</strong></span> without using a calculator.</p>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span class="math-expr"><strong>${isSineMode ? 'sin' : 'cos'} ${displayAngle}°</strong> = </span>
+            <div class="virtual-input-box" id="s1t1-box-ans" data-input-target></div>
+        </div>
+        <div class="feedback-box" id="feedback-panel"></div>
+    `;
+
+    return {
+        expectedType: 'single',
+        hintText: isSineMode ? 
+            `Recall that <span class="math-expr">sin(180° − <em>θ</em>) = sin <em>θ</em></span>.` : 
+            `Recall that <span class="math-expr">cos(180° − <em>θ</em>) = −cos <em>θ</em></span>. Obtuse angles in Quadrant II have negative cosine values.`,
+        validate: () => {
+            const studentIn = document.getElementById('s1t1-box-ans').innerText.replace(/\s+/g, '');
+            return studentIn === expectedAnsStr || studentIn === expectedAnsStr.replace('-', '−');
+        },
+        showWorking: (isCorrect) => {
+            const fbox = document.getElementById('feedback-panel');
+            fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+            let outHtml = `<div class="working-display">`;
+            if (isSineMode) {
+                outHtml += `<p>Using the identity rule <span class="math-expr">sin(180° − <em>θ</em>) = sin <em>θ</em></span>:</p>
+                            <p><span class="math-expr">sin ${displayAngle}° = sin(180° − ${acuteBase}°) = sin ${acuteBase}° = <strong>${expectedAnsStr}</strong></span></p>`;
+            } else {
+                outHtml += `<p>Using the identity rule <span class="math-expr">cos(180° − <em>θ</em>) = −cos <em>θ</em></span>:</p>
+                            <p><span class="math-expr">cos ${displayAngle}° = −cos(180° − ${acuteBase}°) = −cos ${acuteBase}° = <strong>${expectedAnsStr}</strong></span></p>`;
+            }
+            outHtml += `</div>`;
+            fbox.innerHTML = outHtml;
+        },
+        elementMarkup: card
+    };
+}
+function generateSkill1Type2Geometric() {
+    const triple = PYTHAGOREAN_TRIPLES[Math.floor(Math.random() * PYTHAGOREAN_TRIPLES.length)];
+    const sideAB = triple.a * 2;
+    const sideBC = triple.b * 2;
+    const sideAC = triple.c * 2;
+
+    const isSineTarget = Math.random() > 0.5;
+    const targetObtuseAngle = Math.random() > 0.5; 
+
+    const num1 = isSineTarget ? sideAB : sideBC;
+    const den1 = sideAC;
+    const commonDiv = getGreatestCommonDivisor(num1, den1);
+    const reducedNum = num1 / commonDiv;
+    const reducedDen = den1 / commonDiv;
+
+    const targetAngleLabel = targetObtuseAngle ? "∠ACD" : "∠ACB";
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <p style="margin-bottom:10px;">Points <span class="math-expr"><em>B</em></span>, <span class="math-expr"><em>C</em></span>, and <span class="math-expr"><em>D</em></span> form a straight line. <span class="math-expr">∠<em>ABC</em> = 90°</span>.</p>
+        <div class="interactive-diagram">
+            <svg width="290" height="155" viewBox="0 0 290 155">
+                <!-- Base Line BD -->
+                <line x1="15" y1="120" x2="260" y2="120" stroke="#333" stroke-width="2"/>
+                
+                <!-- Triangle ABC -->
+                <polygon points="210,25 210,120 110,120" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                
+                <!-- Right Angle Marker at B -->
+                <path d="M 198 120 L 198 108 L 210 108" fill="none" stroke="#2b579a" stroke-width="1.5"/>
+                
+                <!-- Angle Arc and Label placed inside the target angle space -->
+                ${targetObtuseAngle ? 
+                    getInteriorArc(110, 120, 22, 15, 120, 210, 25, "#8e24aa", targetAngleLabel) : 
+                    getInteriorArc(110, 120, 24, 210, 120, 210, 25, "#8e24aa", targetAngleLabel)
+                }
+                
+                <!-- Vertex Labels -->
+                <text x="215" y="22" font-family="Cambria" font-size="16">A</text>
+                <text x="215" y="140" font-family="Cambria" font-size="16">B</text>
+                <text x="105" y="140" font-family="Cambria" font-size="16">C</text>
+                <text x="10" y="140" font-family="Cambria" font-size="16">D</text>
+                
+                <!-- Side Measurements -->
+                <text x="225" y="75" font-family="Cambria" font-size="14">${sideAB}</text>
+                <text x="155" y="140" font-family="Cambria" font-size="14">${sideBC}</text>
+            </svg>
+        </div>
+        <p style="margin-top:10px;">Find the exact fractional representation of: <strong><span class="math-expr">${isSineTarget ? 'sin' : 'cos'} ${targetAngleLabel}</span></strong></p>
+        <div class="input-group">
+            <div class="virtual-input-box" id="s1t2-box-ans" style="min-width:140px;" data-input-target></div>
+        </div>
+        <div class="feedback-box" id="feedback-panel"></div>
+    `;
+
+    return {
+        expectedType: 'fraction',
+        hintText: `First, determine hypotenuse <span class="math-expr"><em>AC</em> = √(${sideAB}<sup>2</sup> + ${sideBC}<sup>2</sup>) = ${sideAC}</span>.<br>
+                   If evaluating the acute internal option <span class="math-expr">∠ACB</span>, values remain positive.<br>
+                   If evaluating the obtuse external option <span class="math-expr">∠ACD</span>, remember that <span class="math-expr">cos(180° − <em>θ</em>) = −cos <em>θ</em></span>. Write the minus sign on the side of the fraction line.`,
+        validate: () => {
+            const box = document.getElementById('s1t2-box-ans');
+            const hasMinus = box.querySelector('.fraction-side-minus') !== null;
+            const numSub = box.querySelector('[data-sub="num"]');
+            const denSub = box.querySelector('[data-sub="den"]');
+            if (!numSub || !denSub) return false;
+            
+            const n = parseInt(numSub.innerText.trim(), 10);
+            const d = parseInt(denSub.innerText.trim(), 10);
+            
+            const needsMinusSign = (!isSineTarget && targetObtuseAngle);
+            if (needsMinusSign !== hasMinus) return false;
+            return (n === reducedNum && d === reducedDen);
+        },
+        showWorking: (isCorrect) => {
+            const fbox = document.getElementById('feedback-panel');
+            fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+            let outHtml = `<div class="working-display">
+                <p>Hypotenuse length <span class="math-expr"><em>AC</em> = √(${sideAB}<sup>2</sup> + ${sideBC}<sup>2</sup>) = ${sideAC}</span> cm.</p>
+                <p style="margin-top:5px;">For the acute interior position:</p>
+                <p><span class="math-expr">sin ∠ACB = ${sideAB}/${sideAC} = </span><span class="frac"><span class="frac-num">${sideAB/commonDiv}</span><span class="frac-den">${sideAC/commonDiv}</span></span></p>
+                <p><span class="math-expr">cos ∠ACB = ${sideBC}/${sideAC} = </span><span class="frac"><span class="frac-num">${sideBC/commonDiv}</span><span class="frac-den">${sideAC/commonDiv}</span></span></p>
+            `;
+            if (targetObtuseAngle) {
+                outHtml += `<p style="margin-top:5px;">Since angles on a straight line sum to 180°: <span class="math-expr">∠ACD = 180° − ∠ACB</span></p>`;
+                if (isSineTarget) {
+                    outHtml += `<p><span class="math-expr">sin ∠ACD = sin ∠ACB = </span><span class="frac"><span class="frac-num">${reducedNum}</span><span class="frac-den">${reducedDen}</span></span></p>`;
+                } else {
+                    outHtml += `<p><span class="math-expr">cos ∠ACD = −cos ∠ACB = −</span><span class="frac"><span class="frac-num">${reducedNum}</span><span class="frac-den">${reducedDen}</span></span></p>`;
+                }
+            } else {
+                outHtml += `<p style="margin-top:5px;">We are evaluating the internal acute position directly. No negative conversion is required.</p>`;
+            }
+            outHtml += `</div>`;
+            fbox.innerHTML = outHtml;
+        },
+        elementMarkup: card
+    };
+}
+
+function generateSkill1Type3Equation() {
+            const isSine = Math.random() > 0.5;
+            const baseAngle = parseFloat((Math.random() * 45 + 25).toFixed(1));
+            
+            const card = document.createElement('div');
+            card.className = 'question-card';
+
+            if (isSine) {
+                const ratio = Math.sin(baseAngle * Math.PI / 180).toFixed(4);
+                const secondSol = parseFloat((180 - baseAngle).toFixed(1));
+
+                card.innerHTML = `
+                    <p style="margin-bottom:10px;">Solve the equation for <span class="math-expr">0° ≤ <em>θ</em> ≤ 180°</span>, giving your answers correct to 1 decimal place:</p>
+                    <p style="margin:12px 0; font-size:1.15rem;"><strong><span class="math-expr">sin <em>θ</em> = ${ratio}</span></strong></p>
+                    <div class="input-group">
+                        <span class="math-expr"><em>θ</em><sub>1</sub> = </span>
+                        <div class="virtual-input-box" id="s1t3-sin1" style="width:110px;" data-input-target></div>°
+                        <span class="math-expr" style="margin-left:15px;"><em>θ</em><sub>2</sub> = </span>
+                        <div class="virtual-input-box" id="s1t3-sin2" style="width:110px;" data-input-target></div>°
+                    </div>
+                    <div class="feedback-box" id="feedback-panel"></div>
+                `;
+
+                return {
+                    expectedType: 'double',
+                    hintText: `Find the acute angle <span class="math-expr"><em>θ</em><sub>1</sub> = sin<sup>−1</sup>(${ratio})</span>, then calculate the obtuse angle using <span class="math-expr">180° − <em>θ</em><sub>1</sub></span>.`,
+                    validate: () => {
+                        const a1 = parseFloat(document.getElementById('s1t3-sin1').innerText.trim());
+                        const a2 = parseFloat(document.getElementById('s1t3-sin2').innerText.trim());
+                        const correct1 = (Math.abs(a1 - baseAngle) < 0.2 && Math.abs(a2 - secondSol) < 0.2);
+                        const correct2 = (Math.abs(a2 - baseAngle) < 0.2 && Math.abs(a1 - secondSol) < 0.2);
+                        return correct1 || correct2;
+                    },
+                    showWorking: (isCorrect) => {
+                        document.getElementById('feedback-panel').className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                        document.getElementById('feedback-panel').innerHTML = `
+                            <div class="working-display">
+                                <p><strong>Step 1 (Acute Angle):</strong> <span class="math-expr"><em>θ</em><sub>1</sub> = sin<sup>−1</sup>(${ratio}) = ${baseAngle.toFixed(1)}°</span></p>
+                                <p><strong>Step 2 (Obtuse Angle):</strong> <span class="math-expr"><em>θ</em><sub>2</sub> = 180° − ${baseAngle.toFixed(1)}° = ${secondSol.toFixed(1)}°</span></p>
+                            </div>`;
+                    },
+                    elementMarkup: card
+                };
+            } else {
+                const requestObtuse = Math.random() > 0.5;
+                const absoluteRatio = Math.cos(baseAngle * Math.PI / 180);
+                const assignedRatio = requestObtuse ? -absoluteRatio : absoluteRatio;
+                const evaluatedTargetAns = requestObtuse ? parseFloat((180 - baseAngle).toFixed(1)) : parseFloat(baseAngle.toFixed(1));
+
+                card.innerHTML = `
+                    <p style="margin-bottom:10px;">Solve the equation for <span class="math-expr">0° ≤ <em>θ</em> ≤ 180°</span>, giving your answer correct to 1 decimal place:</p>
+                    <p style="margin:12px 0; font-size:1.15rem;"><strong><span class="math-expr">cos <em>θ</em> = ${assignedRatio.toFixed(4)}</span></strong></p>
+                    <div class="input-group">
+                        <span class="math-expr"><em>θ</em> = </span>
+                        <div class="virtual-input-box" id="s1t3-cos" style="width:110px;" data-input-target></div>°
+                    </div>
+                    <div class="feedback-box" id="feedback-panel"></div>
+                `;
+
+                return {
+                    expectedType: 'single',
+                    hintText: requestObtuse ? 
+                        `Since the cosine ratio is negative, <span class="math-expr"><em>θ</em></span> must be an obtuse angle located in Quadrant II.` :
+                        `Since the cosine ratio is positive, <span class="math-expr"><em>θ</em></span> is a standard acute angle located in Quadrant I.`,
+                    validate: () => {
+                        const userVal = parseFloat(document.getElementById('s1t3-cos').innerText.trim());
+                        return Math.abs(userVal - evaluatedTargetAns) < 0.2;
+                    },
+                    showWorking: (isCorrect) => {
+                        document.getElementById('feedback-panel').className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                        document.getElementById('feedback-panel').innerHTML = `
+                            <div class="working-display">
+                                <p>Evaluating inverse functions directly: <span class="math-expr">cos<sup>−1</sup>(${assignedRatio.toFixed(4)}) = ${evaluatedTargetAns.toFixed(1)}°</span></p>
+                                <p style="margin-top:5px;">Notice that ${requestObtuse ? 'negative coordinates output values directly inside Quadrant II (> 90°)' : 'positive coordinates map values inside Quadrant I (< 90°)'}.</p>
+                            </div>`;
+                    },
+                    elementMarkup: card
+                };
+            }
+        }
+        // ==========================================
+        // SUBTOPIC SKILL 2 OBJECT INTERFACES MATRIX
+        // ==========================================
+
+function generateSkill2Type1DirectDiagram() {
+            const sideA = Math.floor(Math.random() * 5) + 6; 
+            const sideB = Math.floor(Math.random() * 5) + 11; 
+            const givenAngle = [45, 60, 120, 135][Math.floor(Math.random() * 4)];
+            const areaComputed = 0.5 * sideA * sideB * Math.sin(givenAngle * Math.PI / 180);
+            const finalAnsString = formatTo3SF(areaComputed);
+            
+            // Base vertex A(70, 130) allows room on left for obtuse angles
+            const A_x = 70, A_y = 130;
+            const armLength = 110;
+            const rad = givenAngle * Math.PI / 180;
+            
+            const C_x = A_x + armLength * Math.cos(rad);
+            const C_y = A_y - armLength * Math.sin(rad);
+
+            // Calculate dynamic angle label position along angle bisector
+            const bisectorRad = (givenAngle / 2) * Math.PI / 180;
+            const labelDist = 42;
+            const angleLabelX = A_x + labelDist * Math.cos(bisectorRad);
+            const angleLabelY = A_y - labelDist * Math.sin(bisectorRad);
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">Find the area of the triangle shown below, correct to 3 significant figures.</p>
+                <div class="interactive-diagram">
+                    <svg viewBox="-40 -20 320 180" style="width:100%; height:auto; overflow:visible;">
+                        <polygon points="${A_x},${A_y} 230,${A_y} ${C_x},${C_y}" fill="none" stroke="#d24726" stroke-width="2.5"/>
+                        ${getInteriorArc(A_x, A_y, 22, 230, A_y, C_x, C_y, "purple")}
+                        <text x="150" y="${A_y + 20}" font-size="13" text-anchor="middle" fill="#333">${sideB} cm</text>
+                        <text x="${(A_x + C_x) / 2 - 12}" y="${(A_y + C_y) / 2}" font-size="13" text-anchor="end" fill="#333">${sideA} cm</text>
+                        <text x="${angleLabelX}" y="${angleLabelY}" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="central" fill="purple">${givenAngle}°</text>
+                    </svg>
+                </div>
+                <div class="input-group">
+                    <span class="math-expr">Area = </span>
+                    <div class="virtual-input-box" id="s2t1-ans" style="width:120px;" data-input-target></div>
+                    <span class="math-expr">cm<sup>2</sup></span>
+                </div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: `Apply the area formula: <span class="math-expr">Area = <span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span><em>ab</em> sin <em>C</em></span>.<br>Substitute the values: <span class="math-expr"><span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> × ${sideA} × ${sideB} × sin(${givenAngle}°)</span>.`,
+                validate: () => {
+                    const studentAns = parseFloat(document.getElementById('s2t1-ans').innerText.trim());
+                    return Math.abs(studentAns - parseFloat(finalAnsString)) < 0.2;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `
+                        <div class="working-display">
+                            <p><span class="math-expr">Area = <span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> <em>a</em> <em>b</em> sin <em>C</em></span></p>
+                            <p><span class="math-expr">Area = <span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> × ${sideA} × ${sideB} × sin(${givenAngle}°)</span></p>
+                            <p><span class="math-expr">Area ≈ ${areaComputed.toFixed(3)} cm<sup>2</sup></span></p>
+                            <p style="margin-top:5px;">Rounding to 3 significant figures yields <strong>${finalAnsString}</strong> cm<sup>2</sup>.</p>
+                        </div>`;
+                },
+                elementMarkup: card
+            };
+        }
+
+
+function generateSkill2Type2IndirectAngle() {
+            const sideA = 8;
+            const sideB = 12;
+            const externalAngle = [60, 45, 30][Math.floor(Math.random() * 3)];
+            const activeIncludedAngle = 180 - externalAngle;
+            
+            const areaTrue = 0.5 * sideA * sideB * Math.sin(activeIncludedAngle * Math.PI / 180);
+            const finalAnsString = formatTo3SF(areaTrue);
+
+            // Baseline coordinates for straight line BCD
+            const B_x = 30, B_y = 120;
+            const C_x = 170, C_y = 120;
+            const D_x = 260, D_y = 120;
+
+            // Calculate point A to the right of C so exterior angle ∠ACD is visually acute
+            const extRad = externalAngle * Math.PI / 180;
+            const armLength = 80;
+            const A_x = C_x + armLength * Math.cos(extRad);
+            const A_y = C_y - armLength * Math.sin(extRad);
+
+            // Angle label position along exterior angle bisector
+            const bisectorRad = (externalAngle / 2) * Math.PI / 180;
+            const angleLabelX = C_x + 42 * Math.cos(bisectorRad);
+            const angleLabelY = C_y - 42 * Math.sin(bisectorRad);
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">In the diagram below, <span class="math-expr"><em>BCD</em></span> is a straight line. Find the area of the triangle <span class="math-expr"><em>ABC</em></span>.</p>
+                <div class="interactive-diagram">
+                    <svg viewBox="-20 -20 320 180" style="width:100%; height:auto; overflow:visible;">
+                        <!-- Straight line BCD -->
+                        <line x1="${B_x - 10}" y1="${B_y}" x2="${D_x}" y2="${D_y}" stroke="#333" stroke-width="2"/>
+                        <!-- Triangle ABC -->
+                        <polygon points="${A_x},${A_y} ${C_x},${C_y} ${B_x},${B_y}" fill="none" stroke="#107c41" stroke-width="2.5"/>
+                        <!-- Exterior Angle Arc at C -->
+                        ${getInteriorArc(C_x, C_y, 25, D_x, D_y, A_x, A_y, "purple")}
+                        
+                        <!-- Vertex Name Labels -->
+                        <text x="${A_x + 5}" y="${A_y - 8}" font-family="Cambria" font-style="italic" font-size="15">A</text>
+                        <text x="${C_x - 5}" y="140" font-family="Cambria" font-style="italic" font-size="15">C</text>
+                        <text x="${B_x - 5}" y="140" font-family="Cambria" font-style="italic" font-size="15">B</text>
+                        <text x="${D_x + 5}" y="140" font-family="Cambria" font-style="italic" font-size="15">D</text>
+                        
+                        <!-- Side and Angle Measurement Labels -->
+                        <text x="${(A_x + C_x) / 2 + 12}" y="${(A_y + C_y) / 2 - 4}" font-size="13" text-anchor="start" fill="#333">${sideA} cm</text>
+                        <text x="${(B_x + C_x) / 2}" y="140" font-size="13" text-anchor="middle" fill="#333">${sideB} cm</text>
+                        <text x="${angleLabelX}" y="${angleLabelY}" font-size="13" font-weight="bold" text-anchor="middle" dominant-baseline="central" fill="purple">${externalAngle}°</text>
+                    </svg>
+                </div>
+                <div class="input-group">
+                    <span class="math-expr">Area = </span>
+                    <div class="virtual-input-box" id="s2t2-ans" style="width:120px;" data-input-target></div>
+                    <span class="math-expr">cm<sup>2</sup></span>
+                </div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: `The given angle <span class="math-expr">${externalAngle}°</span> is not the included angle between sides <span class="math-expr">AC</span> and <span class="math-expr">BC</span>.<br>First, find the interior angle using angles on a straight line: <span class="math-expr">∠ACB = 180° − ${externalAngle}° = ${activeIncludedAngle}°</span>.`,
+                validate: () => {
+                    const studentAns = parseFloat(document.getElementById('s2t2-ans').innerText.trim());
+                    return Math.abs(studentAns - parseFloat(finalAnsString)) < 0.2;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `
+                        <div class="working-display">
+                            <p><strong>Step 1:</strong> Calculate interior included <span class="math-expr">∠ACB = 180° − ${externalAngle}° = ${activeIncludedAngle}°</span>.</p>
+                            <p><strong>Step 2:</strong> Apply the area formula:</p>
+                            <p><span class="math-expr">Area = <span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> × ${sideA} × ${sideB} × sin(${activeIncludedAngle}°)</span></p>
+                            <p>Since <span class="math-expr">sin(${activeIncludedAngle}°) = sin(${externalAngle}°)</span>, the calculation simplifies to an exact value of <strong>${finalAnsString}</strong> cm<sup>2</sup>.</p>
+                        </div>`;
+                },
+                elementMarkup: card
+            };
+        }
+        function generateSkill2Type3InverseObtuseAngle() {
+            const sideA = 7;
+            const sideB = 10;
+            const targetAcuteAngle = 30; 
+            const targetObtuseAngle = 180 - targetAcuteAngle;
+            
+            const areaValue = 0.5 * sideA * sideB * Math.sin(targetObtuseAngle * Math.PI / 180);
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">Given that the area of triangle <span class="math-expr"><em>PQR</em></span> is <strong><span class="math-expr">${areaValue.toFixed(1)} cm<sup>2</sup></span></strong>, <span class="math-expr"><em>PQ</em> = ${sideA} cm</span> and <span class="math-expr"><em>QR</em> = ${sideB} cm</span>.</p>
+                <p style="margin-bottom:10px; color:var(--accent-color);"><strong>Find the value of the obtuse angle <span class="math-expr">∠<em>PQR</em></span>.</strong></p>
+                <div class="input-group">
+                    <span class="math-expr">∠<em>PQR</em> = </span>
+                    <div class="virtual-input-box" id="s2t3-ans" style="width:110px;" data-input-target></div>°
+                </div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: `Rearrange the formula: <span class="math-expr">sin <em>Q</em> = <span class="frac"><span class="frac-num">2 × Area</span><span class="frac-den"><em>p</em> × <em>r</em></span></span></span>.<br>Taking <span class="math-expr">sin<sup>−1</sup></span> gives the acute reference angle. Subtract this value from <span class="math-expr">180°</span> to find the required obtuse angle.`,
+                validate: () => {
+                    const studentAns = parseFloat(document.getElementById('s2t3-ans').innerText.trim());
+                    return Math.abs(studentAns - targetObtuseAngle) < 0.5;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `
+                        <div class="working-display">
+                            <p><span class="math-expr">Area = <span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> <em>p</em> <em>r</em> sin <em>Q</em></span></p>
+                            <p><span class="math-expr">${areaValue.toFixed(1)} = <span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> × ${sideA} × ${sideB} × sin <em>Q</em></span></p>
+                            <p><span class="math-expr">sin <em>Q</em> = ${areaValue.toFixed(1)} / ${0.5 * sideA * sideB} = 0.5</span></p>
+                            <p style="margin-top:5px;">The acute reference angle is <span class="math-expr">sin<sup>−1</sup>(0.5) = 30°</span>.</p>
+                            <p>Since the question asks for the <strong>obtuse angle</strong>:</p>
+                            <p><span class="math-expr">∠PQR = 180° − 30° = 150°</span>.</p>
+                        </div>`;
+                },
+                elementMarkup: card
+            };
+        }
+
+        function generateSkill2Type4Parallelogram() {
+            const sideA = Math.floor(Math.random() * 4) + 6; 
+            const sideB = Math.floor(Math.random() * 4) + 10; 
+            const angle = [45, 60, 120, 135][Math.floor(Math.random() * 4)];
+            
+            const areaTrue = sideA * sideB * Math.sin(angle * Math.PI / 180);
+            const finalAnsString = formatTo3SF(areaTrue);
+
+            const D_x = 40 + 80 * Math.cos(angle * Math.PI/180);
+            const D_y = 120 - 80 * Math.sin(angle * Math.PI/180);
+            const C_x = D_x + 140;
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">Find the area of the parallelogram <span class="math-expr"><em>ABCD</em></span> shown below. Give your answer to 3 significant figures.</p>
+                <div class="interactive-diagram">
+                    <svg width="280" height="150" viewBox="0 0 280 150">
+                        <polygon points="40,120 180,120 ${C_x},${D_y} ${D_x},${D_y}" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                        <line x1="40" y1="120" x2="${C_x}" y2="${D_y}" stroke="#ccc" stroke-dasharray="4,4"/>
+                        ${getInteriorArc(40, 120, 20, 180, 120, D_x, D_y, "purple")}
+                        
+                        <text x="30" y="135" font-size="14" font-weight="bold">A</text>
+                        <text x="185" y="135" font-size="14" font-weight="bold">B</text>
+                        <text x="${C_x + 10}" y="${D_y}" font-size="14" font-weight="bold">C</text>
+                        <text x="${D_x - 10}" y="${D_y}" font-size="14" font-weight="bold">D</text>
+                        <text x="110" y="135" font-size="13">${sideB} cm</text>
+                        <text x="${40 + (D_x-40)/2 - 15}" y="${120 + (D_y-120)/2}" font-size="13">${sideA} cm</text>
+                        <text x="${40 + 25}" y="${120 - 15}" font-size="12" fill="purple">${angle}°</text>
+                    </svg>
+                </div>
+                <div class="input-group">
+                    <span class="math-expr">Area = </span>
+                    <div class="virtual-input-box" id="s2t4-ans" style="width:120px;" data-input-target></div>
+                    <span class="math-expr">cm<sup>2</sup></span>
+                </div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: `A parallelogram can be split diagonally into two congruent triangles.<br>
+                           <span class="math-expr">Area = 2 × (<span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> <em>ab</em> sin <em>C</em>) = <em>ab</em> sin <em>C</em></span>.`,
+                validate: () => {
+                    const studentAns = parseFloat(document.getElementById('s2t4-ans').innerText.trim());
+                    return Math.abs(studentAns - parseFloat(finalAnsString)) < 0.2;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `<div class="working-display">Area is ${finalAnsString}cm<sup>2</sup></div>`;
+                },
+                elementMarkup: card
+            };
+        }
+
+        function generateSkill2Type5Rhombus() {
+            const sideLength = Math.floor(Math.random() * 5) + 8; 
+            const acuteAngle = [30, 45, 60][Math.floor(Math.random() * 3)];
+            const areaTrue = sideLength * sideLength * Math.sin(acuteAngle * Math.PI / 180);
+            const finalAnsString = formatTo3SF(areaTrue);
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">A rhombus has side lengths of <strong>${sideLength} cm</strong> and an internal acute angle of <strong>${acuteAngle}°</strong>. Calculate its area to 3 significant figures.</p>
+                <div class="input-group">
+                    <span class="math-expr">Area = </span>
+                    <div class="virtual-input-box" id="s2t5-ans" style="width:120px;" data-input-target></div>
+                    <span class="math-expr">cm<sup>2</sup></span>
+                </div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: `A rhombus is a specific type of parallelogram where all four side lengths are equal.<br> Use the formula: <span class="math-expr">Area = side × side × sin <em>θ</em></span>.`,
+                validate: () => {
+                    const studentAns = parseFloat(document.getElementById('s2t5-ans').innerText.trim());
+                    return Math.abs(studentAns - parseFloat(finalAnsString)) < 0.2;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `
+                        <div class="working-display">
+                            <p>A rhombus can be split into two identical triangles with side lengths of ${sideLength} cm.</p>
+                            <p><span class="math-expr">Area = 2 × (<span class="frac"><span class="frac-num">1</span><span class="frac-den">2</span></span> × ${sideLength} × ${sideLength} × sin(${acuteAngle}°))</span></p>
+                            <p><span class="math-expr">Area = ${sideLength}<sup>2</sup> × sin(${acuteAngle}°) ≈ ${areaTrue.toFixed(2)} cm<sup>2</sup></span></p>
+                            <p style="margin-top:5px;">To 3 significant figures, the area is <strong>${finalAnsString}</strong> cm<sup>2</sup>.</p>
+                        </div>`;
+                },
+                elementMarkup: card
+            };
+        }
+
+        // ==========================================
+        // SUBTOPIC SKILL 3 OBJECT INTERFACES MATRIX
+        // ==========================================
+
+        function generateSkill3Type1() {
+            const angleB = Math.floor(Math.random() * 20) + 40; 
+            const angleA = Math.floor(Math.random() * 20) + 65; 
+            const angleC = 180 - angleB - angleA;
+            const sideBC = Math.floor(Math.random() * 10) + 10; 
+
+            const sideAC = (sideBC * Math.sin(angleB * Math.PI / 180)) / Math.sin(angleA * Math.PI / 180);
+            const sideAB = (sideBC * Math.sin(angleC * Math.PI / 180)) / Math.sin(angleA * Math.PI / 180);
+
+            const ansAC = formatTo3SF(sideAC);
+            const ansAB = formatTo3SF(sideAB);
+
+            const c_px = 180 * Math.sin(angleC * Math.PI/180) / Math.sin(angleA * Math.PI/180);
+            const Ax = 40 + c_px * Math.cos(angleB * Math.PI/180);
+            const Ay = 130 - c_px * Math.sin(angleB * Math.PI/180);
+
+            const targetAC = Math.random() > 0.5;
+            const targetText = targetAC ? "AC" : "AB";
+            const expectedAns = targetAC ? ansAC : ansAB;
+
+            let hint = "", working = "";
+            if (targetAC) {
+                hint = `To find <span class="math-expr"><em>AC</em></span>, you have its opposite angle (<span class="math-expr">∠<em>ABC</em></span>) and a known side-angle pair (<span class="math-expr"><em>BC</em></span> and <span class="math-expr">∠<em>BAC</em></span>). Use the formula <span class="math-expr"><span class="frac"><span class="frac-num"><em>a</em></span><span class="frac-den">sin <em>A</em></span></span> = <span class="frac"><span class="frac-num"><em>b</em></span><span class="frac-den">sin <em>B</em></span></span></span>.`;
+                working = `
+                    <p><strong>To find <em>AC</em>:</strong></p>
+                    <p><span class="math-expr"><span class="frac"><span class="frac-num"><em>AC</em></span><span class="frac-den">sin ${angleB}°</span></span> = <span class="frac"><span class="frac-num">${sideBC}</span><span class="frac-den">sin ${angleA}°</span></span></span></p>
+                    <p><span class="math-expr"><em>AC</em> = <span class="frac"><span class="frac-num">${sideBC} sin ${angleB}°</span><span class="frac-den">sin ${angleA}°</span></span> ≈ ${sideAC.toFixed(3)} cm</span></p>
+                `;
+            } else {
+                hint = `To find <span class="math-expr"><em>AB</em></span>, first calculate the size of <span class="math-expr">∠<em>BCA</em></span> (angles in a triangle sum to 180°). Then use the Sine Rule.`;
+                working = `
+                    <p><strong>First find ∠<em>BCA</em>:</strong></p>
+                    <p><span class="math-expr">∠<em>BCA</em> = 180° − ${angleA}° − ${angleB}° = ${angleC}°</span></p>
+                    <p>Now apply the Sine Rule:</p>
+                    <p><span class="math-expr"><span class="frac"><span class="frac-num"><em>AB</em></span><span class="frac-den">sin ${angleC}°</span></span> = <span class="frac"><span class="frac-num">${sideBC}</span><span class="frac-den">sin ${angleA}°</span></span></span></p>
+                    <p><span class="math-expr"><em>AB</em> = <span class="frac"><span class="frac-num">${sideBC} sin ${angleC}°</span><span class="frac-den">sin ${angleA}°</span></span> ≈ ${sideAB.toFixed(3)} cm</span></p>
+                `;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">In <span class="math-expr">Δ<em>ABC</em></span>, <span class="math-expr"><em>BC</em> = ${sideBC}</span> cm, <span class="math-expr">∠<em>ABC</em> = ${angleB}°</span> and <span class="math-expr">∠<em>BAC</em> = ${angleA}°</span>.</p>
+                <div class="interactive-diagram">
+                    <svg width="280" height="160" viewBox="0 0 280 160">
+                        <polygon points="40,130 220,130 ${Ax},${Ay}" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                        ${getInteriorArc(40, 130, 20, 220, 130, Ax, Ay, "purple")}
+                        ${getInteriorArc(Ax, Ay, 20, 40, 130, 220, 130, "purple")}
+                        
+                        <text x="30" y="145" font-family="Cambria" font-style="italic" font-size="16">B</text>
+                        <text x="225" y="145" font-family="Cambria" font-style="italic" font-size="16">C</text>
+                        <text x="${Ax}" y="${Ay - 10}" font-family="Cambria" font-style="italic" font-size="16">A</text>
+                        <text x="70" y="120" font-size="12" fill="purple">${angleB}°</text>
+                        <text x="${Ax + 10}" y="${Ay + 25}" font-size="12" fill="purple">${angleA}°</text>
+                        <text x="130" y="145" font-size="13">${sideBC} cm</text>
+                    </svg>
+                </div>
+                <p style="margin-bottom:10px;">Find the length of <span class="math-expr"><em>${targetText}</em></span> correct to 3 significant figures.</p>
+                <div class="input-group">
+                    <span class="math-expr"><em>${targetText}</em> = </span>
+                    <div class="virtual-input-box" id="s3t1-ans" style="width:100px;" data-input-target></div> cm
+                </div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: hint,
+                validate: () => {
+                    const val = parseFloat(document.getElementById('s3t1-ans').innerText);
+                    return Math.abs(val - parseFloat(expectedAns)) < 0.2;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `<div class="working-display">${working}</div>`;
+                },
+                elementMarkup: card
+            };
+        }
+
+        function generateSkill3Type2() {
+            const sidePQ = Math.floor(Math.random() * 5) + 15; 
+            const angleQ = Math.floor(Math.random() * 15) + 30; 
+            
+            const sidePR = Math.floor(Math.random() * 5) + 10; 
+            const minPR = sidePQ * Math.sin(angleQ * Math.PI / 180) + 1;
+            const finalPR = Math.max(sidePR, Math.ceil(minPR));
+            
+            const actualSinR = (sidePQ * Math.sin(angleQ * Math.PI / 180)) / finalPR;
+            const angleR = Math.asin(actualSinR) * 180 / Math.PI; 
+            const angleP = 180 - angleQ - angleR;
+            
+            const sideQR = (finalPR * Math.sin(angleP * Math.PI / 180)) / Math.sin(angleQ * Math.PI / 180);
+
+            const ansR = angleR.toFixed(1);
+            const ansP = angleP.toFixed(1);
+            const ansQR = formatTo3SF(sideQR);
+
+            const scale = 180 / sideQR;
+            const Px = 40 + sidePQ * scale * Math.cos(angleQ * Math.PI/180);
+            const Py = 130 - sidePQ * scale * Math.sin(angleQ * Math.PI/180);
+
+            const targets = ['angleR', 'angleP', 'QR'];
+            const chosen = targets[Math.floor(Math.random() * 3)];
+
+            let hint = "", working = "", promptText = "", inputHTML = "";
+
+            if (chosen === 'angleR') {
+                promptText = `Find the acute angle <span class="math-expr">∠<em>PRQ</em></span> correct to 1 decimal place.`;
+                hint = `Start by finding <span class="math-expr">∠<em>PRQ</em></span>. It is helpful to place the unknown angles in the numerator: <span class="math-expr"><span class="frac"><span class="frac-num">sin <em>A</em></span><span class="frac-den"><em>a</em></span></span> = <span class="frac"><span class="frac-num">sin <em>B</em></span><span class="frac-den"><em>b</em></span></span></span>.`;
+                working = `
+                    <p><strong>To find ∠<em>PRQ</em>:</strong></p>
+                    <p><span class="math-expr"><span class="frac"><span class="frac-num">sin ∠<em>PRQ</em></span><span class="frac-den">${sidePQ}</span></span> = <span class="frac"><span class="frac-num">sin ${angleQ}°</span><span class="frac-den">${finalPR}</span></span></span></p>
+                    <p><span class="math-expr">sin ∠<em>PRQ</em> = <span class="frac"><span class="frac-num">${sidePQ} sin ${angleQ}°</span><span class="frac-den">${finalPR}</span></span> ≈ ${actualSinR.toFixed(4)}</span></p>
+                    <p><span class="math-expr">∠<em>PRQ</em> = sin<sup>−1</sup>(${actualSinR.toFixed(4)}) ≈ ${ansR}°</span></p>
+                `;
+                inputHTML = `<span class="math-expr">∠<em>PRQ</em> = </span><div class="virtual-input-box" id="s3t2-ans" style="width:100px;" data-input-target></div> °`;
+            } else if (chosen === 'angleP') {
+                promptText = `Find the angle <span class="math-expr">∠<em>QPR</em></span> correct to 1 decimal place.`;
+                hint = `First find <span class="math-expr">∠<em>PRQ</em></span> using the Sine Rule. Once you have two angles, use the angle sum of a triangle to find <span class="math-expr">∠<em>QPR</em></span>.`;
+                working = `
+                    <p>First find ∠<em>PRQ</em>: <span class="math-expr">sin ∠<em>PRQ</em> = <span class="frac"><span class="frac-num">${sidePQ} sin ${angleQ}°</span><span class="frac-den">${finalPR}</span></span></span> ➔ <span class="math-expr">∠<em>PRQ</em> ≈ ${ansR}°</span></p>
+                    <p style="margin-top:10px;"><strong>To find ∠<em>QPR</em>:</strong></p>
+                    <p><span class="math-expr">∠<em>QPR</em> = 180° − ${angleQ}° − ${ansR}° = ${ansP}°</span></p>
+                `;
+                inputHTML = `<span class="math-expr">∠<em>QPR</em> = </span><div class="virtual-input-box" id="s3t2-ans" style="width:100px;" data-input-target></div> °`;
+            } else {
+                promptText = `Find the length of <span class="math-expr"><em>QR</em></span> correct to 3 significant figures.`;
+                hint = `First find the other two angles in the triangle (<span class="math-expr">∠<em>PRQ</em></span> and <span class="math-expr">∠<em>QPR</em></span>). Then use the Sine Rule for <span class="math-expr"><em>QR</em></span>.`;
+                working = `
+                    <p>First find the angles: <span class="math-expr">∠<em>PRQ</em> ≈ ${ansR}°</span> and <span class="math-expr">∠<em>QPR</em> ≈ ${ansP}°</span>.</p>
+                    <p style="margin-top:10px;"><strong>To find the length of <em>QR</em>:</strong></p>
+                    <p><span class="math-expr"><span class="frac"><span class="frac-num"><em>QR</em></span><span class="frac-den">sin ${ansP}°</span></span> = <span class="frac"><span class="frac-num">${finalPR}</span><span class="frac-den">sin ${angleQ}°</span></span></span></p>
+                    <p><span class="math-expr"><em>QR</em> = <span class="frac"><span class="frac-num">${finalPR} sin ${ansP}°</span><span class="frac-den">sin ${angleQ}°</span></span> ≈ ${sideQR.toFixed(3)} cm</span></p>
+                `;
+                inputHTML = `<span class="math-expr"><em>QR</em> = </span><div class="virtual-input-box" id="s3t2-ans" style="width:100px;" data-input-target></div> cm`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">In <span class="math-expr">Δ<em>PQR</em></span>, <span class="math-expr"><em>PR</em> = ${finalPR}</span> cm, <span class="math-expr"><em>PQ</em> = ${sidePQ}</span> cm and <span class="math-expr">∠<em>PQR</em> = ${angleQ}°</span>.</p>
+                <div class="interactive-diagram">
+                    <svg width="280" height="160" viewBox="0 0 280 160">
+                        <polygon points="40,130 220,130 ${Px},${Py}" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                        ${getInteriorArc(40, 130, 20, 220, 130, Px, Py, "purple")}
+                        <text x="30" y="145" font-family="Cambria" font-style="italic" font-size="16">Q</text>
+                        <text x="225" y="145" font-family="Cambria" font-style="italic" font-size="16">R</text>
+                        <text x="${Px}" y="${Py - 10}" font-family="Cambria" font-style="italic" font-size="16">P</text>
+                        <text x="70" y="120" font-size="12" fill="purple">${angleQ}°</text>
+                        <text x="${40 + (Px-40)/2 - 15}" y="${130 + (Py-130)/2}" font-size="13">${sidePQ} cm</text>
+                        <text x="${Px + (220-Px)/2 + 10}" y="${130 + (Py-130)/2}" font-size="13">${finalPR} cm</text>
+                    </svg>
+                </div>
+                <p style="margin-bottom:10px;">${promptText}</p>
+                <div class="input-group">${inputHTML}</div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: hint,
+                validate: () => {
+                    const val = parseFloat(document.getElementById('s3t2-ans').innerText);
+                    const expect = chosen === 'angleR' ? ansR : (chosen === 'angleP' ? ansP : ansQR);
+                    return Math.abs(val - parseFloat(expect)) < 0.2;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `<div class="working-display">${working}</div>`;
+                },
+                elementMarkup: card
+            };
+        }
+
+        function generateSkill3Type3() {
+            const sideAB = Math.floor(Math.random() * 5) + 10; 
+            const angleABD = Math.floor(Math.random() * 10) + 30; 
+            const angleCBD = Math.floor(Math.random() * 10) + 40; 
+            const angleBCD = Math.floor(Math.random() * 15) + 75; 
+
+            const sideBD = sideAB / Math.cos(angleABD * Math.PI / 180);
+            const sideCD = (sideBD * Math.sin(angleCBD * Math.PI / 180)) / Math.sin(angleBCD * Math.PI / 180);
+
+            const ansBD = formatTo3SF(sideBD);
+            const ansCD = formatTo3SF(sideCD);
+
+            const Bx = 40, By = 40;
+            const Ax = 40, Ay = 140; 
+            const Dx = 40 + 100 * Math.tan(angleABD * Math.PI / 180);
+            const Dy = 140;
+            const BD_px = Math.sqrt((Dx-Bx)**2 + (Dy-By)**2);
+            const angleBDC = 180 - angleCBD - angleBCD;
+            const BC_px = BD_px * Math.sin(angleBDC * Math.PI / 180) / Math.sin(angleBCD * Math.PI / 180);
+            const angleFromVertical = angleABD + angleCBD;
+            const Cx = 40 + BC_px * Math.sin(angleFromVertical * Math.PI/180);
+            const Cy = 40 + BC_px * Math.cos(angleFromVertical * Math.PI/180);
+
+            const targetBD = Math.random() > 0.5;
+            const targetText = targetBD ? "BD" : "CD";
+            const expectedAns = targetBD ? ansBD : ansCD;
+
+            let hint = "", working = "";
+            if (targetBD) {
+                hint = `Focus purely on the right-angled triangle <span class="math-expr">Δ<em>ABD</em></span> first. You know the adjacent side to the ${angleABD}° angle and need to find the hypotenuse (<span class="math-expr"><em>BD</em></span>). Use standard trigonometric ratios (SOH CAH TOA).`;
+                working = `
+                    <p><strong>Finding the length of <em>BD</em>:</strong></p>
+                    <p>In right-angled <span class="math-expr">Δ<em>ABD</em></span>, use the cosine ratio:</p>
+                    <p><span class="math-expr">cos ∠<em>ABD</em> = <span class="frac"><span class="frac-num">Adjacent</span><span class="frac-den">Hypotenuse</span></span></span></p>
+                    <p><span class="math-expr">cos ${angleABD}° = <span class="frac"><span class="frac-num">${sideAB}</span><span class="frac-den"><em>BD</em></span></span></span></p>
+                    <p><span class="math-expr"><em>BD</em> = <span class="frac"><span class="frac-num">${sideAB}</span><span class="frac-den">cos ${angleABD}°</span></span> ≈ ${sideBD.toFixed(4)} cm</span></p>
+                `;
+            } else {
+                hint = `First find the length of <span class="math-expr"><em>BD</em></span> in the right-angled triangle <span class="math-expr">Δ<em>ABD</em></span>. Then apply the Sine Rule in <span class="math-expr">Δ<em>BCD</em></span> to find <span class="math-expr"><em>CD</em></span>.`;
+                working = `
+                    <p>First find <em>BD</em>: <span class="math-expr"><em>BD</em> = ${sideAB} / cos ${angleABD}° ≈ ${sideBD.toFixed(4)} cm</span></p>
+                    <p style="margin-top:10px;"><strong>Finding the length of <em>CD</em>:</strong></p>
+                    <p>In <span class="math-expr">Δ<em>BCD</em></span>, use the Sine Rule:</p>
+                    <p><span class="math-expr"><span class="frac"><span class="frac-num"><em>CD</em></span><span class="frac-den">sin ${angleCBD}°</span></span> = <span class="frac"><span class="frac-num">${sideBD.toFixed(4)}</span><span class="frac-den">sin ${angleBCD}°</span></span></span></p>
+                    <p><span class="math-expr"><em>CD</em> = <span class="frac"><span class="frac-num">${sideBD.toFixed(4)} sin ${angleCBD}°</span><span class="frac-den">sin ${angleBCD}°</span></span> ≈ ${sideCD.toFixed(3)} cm</span></p>
+                `;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <p style="margin-bottom:10px;">In the diagram, <span class="math-expr"><em>AB</em> = ${sideAB}</span> cm, <span class="math-expr">∠<em>DAB</em> = 90°</span>, <span class="math-expr">∠<em>ABD</em> = ${angleABD}°</span>, <span class="math-expr">∠<em>CBD</em> = ${angleCBD}°</span> and <span class="math-expr">∠<em>BCD</em> = ${angleBCD}°</span>.</p>
+                <div class="interactive-diagram">
+                    <svg width="280" height="180" viewBox="0 0 280 180">
+                        <polygon points="40,140 40,40 ${Dx},140" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                        <polygon points="40,40 ${Dx},140 ${Cx},${Cy}" fill="none" stroke="#d24726" stroke-width="2.5"/>
+                        <path d="M 40 130 L 50 130 L 50 140" fill="none" stroke="#2b579a" stroke-width="1.5"/>
+                        
+                        ${getInteriorArc(Bx, By, 20, Ax, Ay, Dx, Dy, "purple")}
+                        ${getInteriorArc(Bx, By, 25, Dx, Dy, Cx, Cy, "purple")}
+                        ${getInteriorArc(Cx, Cy, 20, Bx, By, Dx, Dy, "purple")}
+                        
+                        <text x="25" y="145" font-family="Cambria" font-style="italic" font-size="16">A</text>
+                        <text x="25" y="35" font-family="Cambria" font-style="italic" font-size="16">B</text>
+                        <text x="${Dx + 10}" y="150" font-family="Cambria" font-style="italic" font-size="16">D</text>
+                        <text x="${Cx + 10}" y="${Cy}" font-family="Cambria" font-style="italic" font-size="16">C</text>
+                        
+                        <text x="15" y="95" font-size="13">${sideAB}</text>
+                        <text x="48" y="75" font-size="11" fill="purple">${angleABD}°</text>
+                        <text x="65" y="55" font-size="11" fill="purple">${angleCBD}°</text>
+                        <text x="${Cx - 10}" y="${Cy + 25}" font-size="11" fill="purple">${angleBCD}°</text>
+                    </svg>
+                </div>
+                <p style="margin-bottom:10px;">Find the length of <span class="math-expr"><em>${targetText}</em></span> to 3 s.f.</p>
+                <div class="input-group">
+                    <span class="math-expr"><em>${targetText}</em> = </span>
+                    <div class="virtual-input-box" id="s3t3-ans" style="width:100px;" data-input-target></div> cm
+                </div>
+                <div class="feedback-box" id="feedback-panel"></div>
+            `;
+
+            return {
+                expectedType: 'single',
+                hintText: hint,
+                validate: () => {
+                    const val = parseFloat(document.getElementById('s3t3-ans').innerText);
+                    return Math.abs(val - parseFloat(expectedAns)) < 0.2;
+                },
+                showWorking: (isCorrect) => {
+                    const fbox = document.getElementById('feedback-panel');
+                    fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+                    fbox.innerHTML = `<div class="working-display">${working}</div>`;
+                },
+                elementMarkup: card
+            };
+        }
+
+// Dynamic SVG layout helper for Triangles
+function fitTriangleToSVG(A_raw, B_raw, C_raw, svgW = 280, svgH = 160, pad = 32) {
+    const xs = [A_raw.x, B_raw.x, C_raw.x];
+    const ys = [A_raw.y, B_raw.y, C_raw.y];
+
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minY = Math.min(...ys), maxY = Math.max(...ys);
+
+    const rawW = maxX - minX || 1;
+    const rawH = maxY - minY || 1;
+
+    const scale = Math.min((svgW - 2 * pad) / rawW, (svgH - 2 * pad) / rawH);
+
+    const offsetX = (svgW - rawW * scale) / 2 - minX * scale;
+    const offsetY = (svgH - rawH * scale) / 2 + maxY * scale;
+
+    const transform = (p) => ({
+        x: p.x * scale + offsetX,
+        y: offsetY - p.y * scale
+    });
+
+    return { A: transform(A_raw), B: transform(B_raw), C: transform(C_raw) };
+}
+
+// Dynamic SVG layout helper for Quadrilaterals
+function fitPolygonToSVG(points, svgW = 280, svgH = 180, pad = 35) {
+    const xs = points.map(p => p.x);
+    const ys = points.map(p => p.y);
+
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minY = Math.min(...ys), maxY = Math.max(...ys);
+
+    const rawW = maxX - minX || 1;
+    const rawH = maxY - minY || 1;
+
+    const scale = Math.min((svgW - 2 * pad) / rawW, (svgH - 2 * pad) / rawH);
+
+    const offsetX = (svgW - rawW * scale) / 2 - minX * scale;
+    const offsetY = (svgH - rawH * scale) / 2 + maxY * scale;
+
+    return points.map(p => ({
+        x: p.x * scale + offsetX,
+        y: offsetY - p.y * scale
+    }));
+}
+
+// Calculates side label positions pushed slightly outward from the shape centroid
+function getEdgeLabelPos(p1, p2, centroid, offset = 14) {
+    const mx = (p1.x + p2.x) / 2;
+    const my = (p1.y + p2.y) / 2;
+
+    let dx = mx - centroid.x;
+    let dy = my - centroid.y;
+    const len = Math.hypot(dx, dy) || 1;
+
+    return {
+        x: (mx + (dx / len) * offset).toFixed(1),
+        y: (my + (dy / len) * offset).toFixed(1)
+    };
+}
+
+
+// ==========================================
+// SUBTOPIC SKILL 4 OBJECT INTERFACES MATRIX
+// ==========================================
+
+function generateSkill4Type1SAS() {
+    const b = Math.floor(Math.random() * 10) + 15;
+    const c = Math.floor(Math.random() * 10) + 15;
+    const A = Math.floor(Math.random() * 80) + 40; 
+    const a = Math.sqrt(b*b + c*c - 2*b*c*Math.cos(A * Math.PI / 180));
+    const ansStr = formatTo3SF(a);
+
+    // Mathematical coordinates
+    const A_raw = { x: 0, y: 0 };
+    const B_raw = { x: c, y: 0 };
+    const C_raw = { x: b * Math.cos(A * Math.PI / 180), y: b * Math.sin(A * Math.PI / 180) };
+
+    const { A: ptsA, B: ptsB, C: ptsC } = fitTriangleToSVG(A_raw, B_raw, C_raw, 280, 160, 35);
+    const centroid = { x: (ptsA.x + ptsB.x + ptsC.x) / 3, y: (ptsA.y + ptsB.y + ptsC.y) / 3 };
+
+    const posAB = getEdgeLabelPos(ptsA, ptsB, centroid, 16);
+    const posAC = getEdgeLabelPos(ptsA, ptsC, centroid, 16);
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <p style="margin-bottom:10px;">In <span class="math-expr">Δ<em>ABC</em></span>, <span class="math-expr"><em>AB</em> = ${c}</span> cm, <span class="math-expr"><em>AC</em> = ${b}</span> cm and <span class="math-expr">∠<em>BAC</em> = ${A}°</span>.</p>
+        <div class="interactive-diagram">
+            <svg width="280" height="160" viewBox="0 0 280 160">
+                <polygon points="${ptsA.x},${ptsA.y} ${ptsB.x},${ptsB.y} ${ptsC.x},${ptsC.y}" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                ${getInteriorArc(ptsA.x, ptsA.y, 20, ptsB.x, ptsB.y, ptsC.x, ptsC.y, "#8e24aa", `${A}°`)}
+                
+                <text x="${ptsA.x - 12}" y="${ptsA.y + 12}" font-family="Cambria" font-style="italic" font-size="16">A</text>
+                <text x="${ptsB.x + 8}" y="${ptsB.y + 12}" font-family="Cambria" font-style="italic" font-size="16">B</text>
+                <text x="${ptsC.x}" y="${ptsC.y - 10}" font-family="Cambria" font-style="italic" font-size="16" text-anchor="middle">C</text>
+                
+                <text x="${posAB.x}" y="${posAB.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${c} cm</text>
+                <text x="${posAC.x}" y="${posAC.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${b} cm</text>
+            </svg>
+        </div>
+        <p style="margin-bottom:10px;">Find the length of <span class="math-expr"><em>BC</em></span> correct to 3 significant figures.</p>
+        <div class="input-group">
+            <span class="math-expr"><em>BC</em> = </span>
+            <div class="virtual-input-box" id="s4t1-ans" style="width:100px;" data-input-target></div> cm
+        </div>
+        <div class="feedback-box" id="feedback-panel"></div>
+    `;
+
+    return {
+        expectedType: 'single',
+        hintText: `Use the Cosine Rule: <span class="math-expr"><em>a</em><sup>2</sup> = <em>b</em><sup>2</sup> + <em>c</em><sup>2</sup> − 2<em>bc</em> cos <em>A</em></span>.`,
+        validate: () => {
+            const val = parseFloat(document.getElementById('s4t1-ans').innerText);
+            return Math.abs(val - parseFloat(ansStr)) < 0.2;
+        },
+        showWorking: (isCorrect) => {
+            const fbox = document.getElementById('feedback-panel');
+            fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+            fbox.innerHTML = `
+                <div class="working-display">
+                    <p><span class="math-expr"><em>BC</em><sup>2</sup> = <em>AC</em><sup>2</sup> + <em>AB</em><sup>2</sup> − 2(<em>AC</em>)(<em>AB</em>) cos ∠<em>BAC</em></span></p>
+                    <p><span class="math-expr"><em>BC</em><sup>2</sup> = ${b}<sup>2</sup> + ${c}<sup>2</sup> − 2(${b})(${c}) cos ${A}°</span></p>
+                    <p><span class="math-expr"><em>BC</em> = √(${b*b + c*c} − ${2*b*c} cos ${A}°) ≈ ${a.toFixed(3)} cm</span></p>
+                </div>`;
+        },
+        elementMarkup: card
+    };
+}
+
+function generateSkill4Type2SSS() {
+    const a = Math.floor(Math.random() * 10) + 15;
+    const b = Math.floor(Math.random() * 10) + 15;
+    const minC = Math.abs(a-b) + 3;
+    const maxC = a + b - 3;
+    const c = Math.floor(Math.random() * (maxC - minC + 1)) + minC;
+
+    const cosA = (b*b + c*c - a*a)/(2*b*c);
+    const A_rad = Math.acos(cosA);
+    const A_deg = A_rad * 180 / Math.PI;
+    const ansStr = A_deg.toFixed(1);
+
+    // Unscaled Mathematical Coordinates
+    const A_raw = { x: 0, y: 0 };
+    const B_raw = { x: c, y: 0 };
+    const C_raw = { x: b * Math.cos(A_rad), y: b * Math.sin(A_rad) };
+
+    const { A: ptsA, B: ptsB, C: ptsC } = fitTriangleToSVG(A_raw, B_raw, C_raw, 280, 160, 35);
+    const centroid = { x: (ptsA.x + ptsB.x + ptsC.x) / 3, y: (ptsA.y + ptsB.y + ptsC.y) / 3 };
+
+    const posAB = getEdgeLabelPos(ptsA, ptsB, centroid, 16);
+    const posAC = getEdgeLabelPos(ptsA, ptsC, centroid, 16);
+    const posBC = getEdgeLabelPos(ptsB, ptsC, centroid, 16);
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <p style="margin-bottom:10px;">In <span class="math-expr">Δ<em>ABC</em></span>, <span class="math-expr"><em>BC</em> = ${a}</span> cm, <span class="math-expr"><em>AC</em> = ${b}</span> cm and <span class="math-expr"><em>AB</em> = ${c}</span> cm.</p>
+        <div class="interactive-diagram">
+            <svg width="280" height="160" viewBox="0 0 280 160">
+                <polygon points="${ptsA.x},${ptsA.y} ${ptsB.x},${ptsB.y} ${ptsC.x},${ptsC.y}" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                
+                <text x="${ptsA.x - 12}" y="${ptsA.y + 12}" font-family="Cambria" font-style="italic" font-size="16">A</text>
+                <text x="${ptsB.x + 8}" y="${ptsB.y + 12}" font-family="Cambria" font-style="italic" font-size="16">B</text>
+                <text x="${ptsC.x}" y="${ptsC.y - 10}" font-family="Cambria" font-style="italic" font-size="16" text-anchor="middle">C</text>
+                
+                <text x="${posAB.x}" y="${posAB.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${c} cm</text>
+                <text x="${posAC.x}" y="${posAC.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${b} cm</text>
+                <text x="${posBC.x}" y="${posBC.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${a} cm</text>
+            </svg>
+        </div>
+        <p style="margin-bottom:10px;">Find the size of <span class="math-expr">∠<em>BAC</em></span> correct to 1 decimal place.</p>
+        <div class="input-group">
+            <span class="math-expr">∠<em>BAC</em> = </span>
+            <div class="virtual-input-box" id="s4t2-ans" style="width:100px;" data-input-target></div> °
+        </div>
+        <div class="feedback-box" id="feedback-panel"></div>
+    `;
+
+    return {
+        expectedType: 'single',
+        hintText: `Rearrange the Cosine Rule to solve for the angle: <span class="math-expr">cos <em>A</em> = <span class="frac"><span class="frac-num"><em>b</em><sup>2</sup> + <em>c</em><sup>2</sup> − <em>a</em><sup>2</sup></span><span class="frac-den">2<em>bc</em></span></span></span>.`,
+        validate: () => {
+            const val = parseFloat(document.getElementById('s4t2-ans').innerText);
+            return Math.abs(val - parseFloat(ansStr)) < 0.2;
+        },
+        showWorking: (isCorrect) => {
+            const fbox = document.getElementById('feedback-panel');
+            fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+            fbox.innerHTML = `
+                <div class="working-display">
+                    <p><span class="math-expr">cos ∠<em>BAC</em> = <span class="frac"><span class="frac-num">${b}<sup>2</sup> + ${c}<sup>2</sup> − ${a}<sup>2</sup></span><span class="frac-den">2(${b})(${c})</span></span></span></p>
+                    <p><span class="math-expr">cos ∠<em>BAC</em> = <span class="frac"><span class="frac-num">${b*b + c*c - a*a}</span><span class="frac-den">${2*b*c}</span></span> ≈ ${cosA.toFixed(4)}</span></p>
+                    <p><span class="math-expr">∠<em>BAC</em> = cos<sup>−1</sup>(${cosA.toFixed(4)}) ≈ ${ansStr}°</span></p>
+                </div>`;
+        },
+        elementMarkup: card
+    };
+}
+
+function generateSkill4Type3Bearings() {
+    const bearingA = Math.floor(Math.random() * 50) + 20; 
+    const bearingB = Math.floor(Math.random() * 50) + 110; 
+    const distA = Math.floor(Math.random() * 15) + 20;
+    const distB = Math.floor(Math.random() * 15) + 20;
+
+    const angle = bearingB - bearingA;
+    const dist = Math.sqrt(distA*distA + distB*distB - 2*distA*distB*Math.cos(angle*Math.PI/180));
+    const ansStr = formatTo3SF(dist);
+
+    const Px = 140, Py = 125;
+    const scale = 75 / Math.max(distA, distB);
+    const lenA = distA * scale;
+    const lenB = distB * scale;
+
+    const Ax = Px + lenA * Math.sin(bearingA * Math.PI/180);
+    const Ay = Py - lenA * Math.cos(bearingA * Math.PI/180);
+    const Bx = Px + lenB * Math.sin(bearingB * Math.PI/180);
+    const By = Py - lenB * Math.cos(bearingB * Math.PI/180);
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <p style="margin-bottom:10px;">Two ships leave port <span class="math-expr"><em>P</em></span>. Ship A travels ${distA} km on a bearing of ${String(bearingA).padStart(3, '0')}°. Ship B travels ${distB} km on a bearing of ${String(bearingB).padStart(3, '0')}°.</p>
+        <div class="interactive-diagram">
+            <svg width="280" height="180" viewBox="0 0 280 180">
+                <line x1="${Px}" y1="${Py}" x2="${Px}" y2="25" stroke="#999" stroke-dasharray="4,4" stroke-width="2"/>
+                <text x="${Px - 4}" y="18" font-family="sans-serif" font-weight="bold" font-size="14">N</text>
+                
+                <line x1="${Px}" y1="${Py}" x2="${Ax}" y2="${Ay}" stroke="#2b579a" stroke-width="2.5"/>
+                <line x1="${Px}" y1="${Py}" x2="${Bx}" y2="${By}" stroke="#2b579a" stroke-width="2.5"/>
+                <line x1="${Ax}" y1="${Ay}" x2="${Bx}" y2="${By}" stroke="#d24726" stroke-dasharray="4,4" stroke-width="2"/>
+                
+                <text x="${Px - 15}" y="${Py + 15}" font-family="Cambria" font-style="italic" font-size="16">P</text>
+                <text x="${Ax + 5}" y="${Ay - 5}" font-family="Cambria" font-style="italic" font-size="16">A</text>
+                <text x="${Bx + 8}" y="${By + 12}" font-family="Cambria" font-style="italic" font-size="16">B</text>
+                
+                <text x="${Px + (Ax-Px)/2 - 18}" y="${Py + (Ay-Py)/2}" font-size="12" text-anchor="middle">${distA} km</text>
+                <text x="${Px + (Bx-Px)/2 + 10}" y="${Py + (By-Py)/2 + 10}" font-size="12" text-anchor="middle">${distB} km</text>
+            </svg>
+        </div>
+        <p style="margin-bottom:10px;">Find the direct distance between the two ships, correct to 3 significant figures.</p>
+        <div class="input-group">
+            <span class="math-expr"><em>AB</em> = </span>
+            <div class="virtual-input-box" id="s4t3-ans" style="width:100px;" data-input-target></div> km
+        </div>
+        <div class="feedback-box" id="feedback-panel"></div>
+    `;
+
+    return {
+        expectedType: 'single',
+        hintText: `The angle between the two paths at port <span class="math-expr"><em>P</em></span> is the difference between their bearings: <span class="math-expr">${bearingB}° − ${bearingA}° = ${angle}°</span>. Then apply the Cosine Rule.`,
+        validate: () => {
+            const val = parseFloat(document.getElementById('s4t3-ans').innerText);
+            return Math.abs(val - parseFloat(ansStr)) < 0.2;
+        },
+        showWorking: (isCorrect) => {
+            const fbox = document.getElementById('feedback-panel');
+            fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+            fbox.innerHTML = `
+                <div class="working-display">
+                    <p><strong>Step 1:</strong> Find the included angle: <span class="math-expr">∠<em>APB</em> = ${bearingB}° − ${bearingA}° = ${angle}°</span></p>
+                    <p><strong>Step 2:</strong> Use the Cosine Rule:</p>
+                    <p><span class="math-expr"><em>AB</em><sup>2</sup> = ${distA}<sup>2</sup> + ${distB}<sup>2</sup> − 2(${distA})(${distB}) cos ${angle}°</span></p>
+                    <p><span class="math-expr"><em>AB</em> = √(${distA*distA + distB*distB} − ${2*distA*distB} cos ${angle}°) ≈ ${dist.toFixed(3)} km</span></p>
+                </div>`;
+        },
+        elementMarkup: card
+    };
+}
+
+function generateSkill4Type4Composite() {
+    const AD = Math.floor(Math.random() * 5) + 10;
+    const AB = Math.floor(Math.random() * 5) + 10;
+    const angleA = Math.floor(Math.random() * 40) + 50; 
+    const angleA_rad = angleA * Math.PI / 180;
+
+    const BD = Math.sqrt(AD*AD + AB*AB - 2*AD*AB*Math.cos(angleA_rad));
+
+    const BC = Math.floor(Math.random() * 4) + Math.floor(BD/2) + 2;
+    const CD = Math.floor(Math.random() * 4) + Math.floor(BD/2) + 2;
+
+    const cosC = (BC*BC + CD*CD - BD*BD)/(2*BC*CD);
+    const angleC = Math.acos(cosC)*180/Math.PI;
+    const ansStr = angleC.toFixed(1);
+
+    // Unscaled Mathematical Coordinates
+    const A_raw = { x: 0, y: 0 };
+    const D_raw = { x: AD, y: 0 };
+    const B_raw = { x: AB * Math.cos(angleA_rad), y: AB * Math.sin(angleA_rad) };
+
+    const angleBDA = Math.acos((AD*AD + BD*BD - AB*AB) / (2 * AD * BD));
+    const angleBDC = Math.acos((CD*CD + BD*BD - BC*BC) / (2 * CD * BD));
+    
+    const DB_dx = B_raw.x - D_raw.x;
+    const DB_dy = B_raw.y - D_raw.y;
+    const theta_DB = Math.atan2(DB_dy, DB_dx);
+    const theta_DC = theta_DB - angleBDC;
+
+    const C_raw = {
+        x: D_raw.x + CD * Math.cos(theta_DC),
+        y: D_raw.y + CD * Math.sin(theta_DC)
+    };
+
+    // Auto-fit quadrilateral
+    const [ptsA, ptsD, ptsC, ptsB] = fitPolygonToSVG([A_raw, D_raw, C_raw, B_raw], 280, 180, 35);
+
+    const quadCentroid = {
+        x: (ptsA.x + ptsB.x + ptsC.x + ptsD.x) / 4,
+        y: (ptsA.y + ptsB.y + ptsC.y + ptsD.y) / 4
+    };
+
+    const posAB = getEdgeLabelPos(ptsA, ptsB, quadCentroid, 16);
+    const posAD = getEdgeLabelPos(ptsA, ptsD, quadCentroid, 16);
+    const posBC = getEdgeLabelPos(ptsB, ptsC, quadCentroid, 16);
+    const posCD = getEdgeLabelPos(ptsC, ptsD, quadCentroid, 16);
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <p style="margin-bottom:10px;">In the quadrilateral, <span class="math-expr"><em>AD</em> = ${AD}</span> cm, <span class="math-expr"><em>AB</em> = ${AB}</span> cm, <span class="math-expr">∠<em>BAD</em> = ${angleA}°</span>, <span class="math-expr"><em>BC</em> = ${BC}</span> cm, and <span class="math-expr"><em>CD</em> = ${CD}</span> cm.</p>
+        <div class="interactive-diagram">
+            <svg width="280" height="180" viewBox="0 0 280 180">
+                <polygon points="${ptsA.x},${ptsA.y} ${ptsD.x},${ptsD.y} ${ptsC.x},${ptsC.y} ${ptsB.x},${ptsB.y}" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                <line x1="${ptsB.x}" y1="${ptsB.y}" x2="${ptsD.x}" y2="${ptsD.y}" stroke="#aaa" stroke-dasharray="4,4" stroke-width="1.8"/>
+                
+                ${getInteriorArc(ptsA.x, ptsA.y, 22, ptsD.x, ptsD.y, ptsB.x, ptsB.y, "#8e24aa", `${angleA}°`)}
+
+                <text x="${ptsA.x - 12}" y="${ptsA.y + 12}" font-family="Cambria" font-style="italic" font-size="16">A</text>
+                <text x="${ptsB.x - 10}" y="${ptsB.y - 8}" font-family="Cambria" font-style="italic" font-size="16">B</text>
+                <text x="${ptsC.x + 8}" y="${ptsC.y - 4}" font-family="Cambria" font-style="italic" font-size="16">C</text>
+                <text x="${ptsD.x + 8}" y="${ptsD.y + 12}" font-family="Cambria" font-style="italic" font-size="16">D</text>
+
+                <text x="${posAB.x}" y="${posAB.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${AB} cm</text>
+                <text x="${posAD.x}" y="${posAD.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${AD} cm</text>
+                <text x="${posBC.x}" y="${posBC.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${BC} cm</text>
+                <text x="${posCD.x}" y="${posCD.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${CD} cm</text>
+            </svg>
+        </div>
+        <p style="margin-bottom:10px;">Find the size of <span class="math-expr">∠<em>BCD</em></span> correct to 1 decimal place.</p>
+        <div class="input-group">
+            <span class="math-expr">∠<em>BCD</em> = </span>
+            <div class="virtual-input-box" id="s4t4-ans" style="width:100px;" data-input-target></div> °
+        </div>
+        <div class="feedback-box" id="feedback-panel"></div>
+    `;
+
+    return {
+        expectedType: 'single',
+        hintText: `This is a two-step problem. First, use the Cosine Rule in <span class="math-expr">Δ<em>ABD</em></span> to calculate the length of the shared diagonal <span class="math-expr"><em>BD</em></span>. Then, use the Cosine Rule again in <span class="math-expr">Δ<em>BCD</em></span> to find the angle.`,
+        validate: () => {
+            const val = parseFloat(document.getElementById('s4t4-ans').innerText);
+            return Math.abs(val - parseFloat(ansStr)) < 0.2;
+        },
+        showWorking: (isCorrect) => {
+            const fbox = document.getElementById('feedback-panel');
+            fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+            fbox.innerHTML = `
+                <div class="working-display">
+                    <p><strong>Step 1 (Find BD):</strong></p>
+                    <p><span class="math-expr"><em>BD</em> = √(${AD}<sup>2</sup> + ${AB}<sup>2</sup> − 2(${AD})(${AB}) cos ${angleA}°) ≈ ${BD.toFixed(3)} cm</span></p>
+                    <p style="margin-top:10px;"><strong>Step 2 (Find ∠BCD):</strong></p>
+                    <p><span class="math-expr">cos ∠<em>BCD</em> = <span class="frac"><span class="frac-num">${BC}<sup>2</sup> + ${CD}<sup>2</sup> − ${BD.toFixed(3)}<sup>2</sup></span><span class="frac-den">2(${BC})(${CD})</span></span></span></p>
+                    <p><span class="math-expr">∠<em>BCD</em> = cos<sup>−1</sup>(${cosC.toFixed(4)}) ≈ ${ansStr}°</span></p>
+                </div>`;
+        },
+        elementMarkup: card
+    };
+}
+
+function generateSkill4Type5Algebraic() {
+    const templates = [
+        { angle: 60, sides: ['x', '5', '7'], root: 8, opp: '7', adj: '5' },
+        { angle: 120, sides: ['x', '3', '7'], root: 5, opp: '7', adj: '3' },
+        { angle: 60, sides: ['x', '8', '13'], root: 15, opp: '13', adj: '8' }
+    ];
+    const t = templates[Math.floor(Math.random() * templates.length)];
+    const ansStr = t.root.toString();
+
+    const c_val = t.root;
+    const b_val = parseInt(t.adj, 10);
+    const angle_rad = t.angle * Math.PI / 180;
+
+    const A_raw = { x: 0, y: 0 };
+    const B_raw = { x: c_val, y: 0 };
+    const C_raw = { x: b_val * Math.cos(angle_rad), y: b_val * Math.sin(angle_rad) };
+
+    const { A: ptsA, B: ptsB, C: ptsC } = fitTriangleToSVG(A_raw, B_raw, C_raw, 280, 160, 35);
+    const centroid = { x: (ptsA.x + ptsB.x + ptsC.x) / 3, y: (ptsA.y + ptsB.y + ptsC.y) / 3 };
+
+    const posAB = getEdgeLabelPos(ptsA, ptsB, centroid, 16);
+    const posAC = getEdgeLabelPos(ptsA, ptsC, centroid, 16);
+    const posBC = getEdgeLabelPos(ptsB, ptsC, centroid, 16);
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <p style="margin-bottom:10px;">The lengths of the sides of a triangle are <span class="math-expr"><em>x</em></span> cm, ${t.adj} cm, and ${t.opp} cm. The angle opposite the ${t.opp} cm side is ${t.angle}°.</p>
+        <div class="interactive-diagram">
+            <svg width="280" height="160" viewBox="0 0 280 160">
+                <polygon points="${ptsA.x},${ptsA.y} ${ptsB.x},${ptsB.y} ${ptsC.x},${ptsC.y}" fill="none" stroke="#2b579a" stroke-width="2.5"/>
+                ${getInteriorArc(ptsA.x, ptsA.y, 20, ptsB.x, ptsB.y, ptsC.x, ptsC.y, "#8e24aa", `${t.angle}°`)}
+
+                <text x="${posAB.x}" y="${posAB.y}" font-size="14" font-family="Cambria" font-style="italic" text-anchor="middle" dominant-baseline="central">x</text>
+                <text x="${posAC.x}" y="${posAC.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${t.adj}</text>
+                <text x="${posBC.x}" y="${posBC.y}" font-size="13" text-anchor="middle" dominant-baseline="central">${t.opp}</text>
+            </svg>
+        </div>
+        <p style="margin-bottom:10px;">Form an equation in <span class="math-expr"><em>x</em></span> using the Cosine Rule, and solve it to find the exact positive integer value of <span class="math-expr"><em>x</em></span>.</p>
+        <div class="input-group">
+            <span class="math-expr"><em>x</em> = </span>
+            <div class="virtual-input-box" id="s4t5-ans" style="width:100px;" data-input-target></div>
+        </div>
+        <div class="feedback-box" id="feedback-panel"></div>
+    `;
+
+    return {
+        expectedType: 'single',
+        hintText: `Apply the Cosine Rule to set up an algebraic equation. Remember that <span class="math-expr">cos(60°) = 0.5</span> and <span class="math-expr">cos(120°) = −0.5</span>. Solve the resulting quadratic equation for <span class="math-expr"><em>x</em></span>.`,
+        validate: () => {
+            const val = parseInt(document.getElementById('s4t5-ans').innerText.trim(), 10);
+            return val === t.root;
+        },
+        showWorking: (isCorrect) => {
+            const fbox = document.getElementById('feedback-panel');
+            fbox.className = "feedback-box " + (isCorrect ? "correct" : "wrong");
+            fbox.innerHTML = `
+                <div class="working-display">
+                    <p>Using the Cosine Rule:</p>
+                    <p><span class="math-expr">${t.opp}<sup>2</sup> = <em>x</em><sup>2</sup> + ${t.adj}<sup>2</sup> − 2(<em>x</em>)(${t.adj}) cos ${t.angle}°</span></p>
+                    <p><span class="math-expr">${t.opp*t.opp} = <em>x</em><sup>2</sup> + ${t.adj*t.adj} − ${2*t.adj}<em>x</em> (${Math.cos(t.angle * Math.PI/180)})</span></p>
+                    <p>Simplify and factorize to find that the positive root is <strong>${t.root}</strong>.</p>
+                </div>`;
+        },
+        elementMarkup: card
+    };
+}
+
+        // ==========================================
+        // VIRTUAL INTERFACE FOCUS & LAYOUT CONTROL
+        // ==========================================
+
+        function handleVirtualSubmission() {
+            if (!currentQuestionData) return;
+            if (document.getElementById('next-question-btn').style.display === 'inline-flex') return;
+
+            const isCorrect = currentQuestionData.validate();
+            if (isCorrect) {
+                scoreCorrect++;
+                document.getElementById('count-correct').innerText = scoreCorrect;
+            } else {
+                scoreWrong++;
+                document.getElementById('count-wrong').innerText = scoreWrong;
+            }
+
+            currentQuestionData.showWorking(isCorrect);
+            document.getElementById('hint-trigger-btn').style.display = 'none';
+            document.getElementById('next-question-btn').style.display = 'inline-flex';
+        }
+
+        function showQuestionHint() {
+            const workspace = document.getElementById('question-workspace');
+            let hintContainer = document.getElementById('active-hint-alert-card');
+            if (!hintContainer) {
+                hintContainer = document.createElement('div');
+                hintContainer.id = 'active-hint-alert-card';
+                hintContainer.style.cssText = "background-color:#fff3cd; border:1px solid #ffeeba; color:#856404; padding:12px; border-radius:6px; margin-top:10px; font-size:1.05rem;";
+                workspace.appendChild(hintContainer);
+            }
+            hintContainer.innerHTML = `<strong>Hint:</strong><br>${currentQuestionData.hintText}`;
+            hintContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function initKeyboardFocusListeners() {
+            const container = document.getElementById('question-workspace');
+            
+            container.addEventListener('click', (e) => {
+                const subBox = e.target.closest('.fraction-input-subbox');
+                if (subBox) {
+                    document.querySelectorAll('.fraction-input-subbox').forEach(b => b.classList.remove('focused-sub'));
+                    document.querySelectorAll('.virtual-input-box').forEach(b => b.classList.remove('focused'));
+                    
+                    subBox.classList.add('focused-sub');
+                    activeTextTarget = subBox;
+                    
+                    const mainBox = subBox.closest('.virtual-input-box');
+                    if (mainBox) {
+                        mainBox.classList.add('focused');
+                        focusedInputId = mainBox.id;
+                    }
+                    return;
+                }
+
+                const mainBox = e.target.closest('[data-input-target]');
+                if (mainBox) {
+                    document.querySelectorAll('.virtual-input-box').forEach(box => box.classList.remove('focused'));
+                    document.querySelectorAll('.fraction-input-subbox').forEach(b => b.classList.remove('focused-sub'));
+                    
+                    mainBox.classList.add('focused');
+                    focusedInputId = mainBox.id;
+                    
+                    const innerNum = mainBox.querySelector('[data-sub="num"]');
+                    if (innerNum) {
+                        innerNum.classList.add('focused-sub');
+                        activeTextTarget = innerNum;
+                    } else {
+                        activeTextTarget = mainBox;
+                    }
+                }
+            });
+
+            document.querySelectorAll('.keyboard-grid .key').forEach(button => {
+                button.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    processKeyPressValue(button.getAttribute('data-val'));
+                });
+            });
+        }
+
+        function setVirtualInputFocus(targetDOMNode) {
+            document.querySelectorAll('.virtual-input-box').forEach(box => box.classList.remove('focused'));
+            document.querySelectorAll('.fraction-input-subbox').forEach(b => b.classList.remove('focused-sub'));
+            targetDOMNode.classList.add('focused');
+            focusedInputId = targetDOMNode.id;
+            activeTextTarget = targetDOMNode;
+        }
+
+        function processKeyPressValue(keyValue) {
+            if (keyValue === 'SUBMIT') {
+                handleVirtualSubmission();
+                return;
+            }
+            if (!focusedInputId || !activeTextTarget) return;
+
+            const mainBox = document.getElementById(focusedInputId);
+            const hasFraction = mainBox.querySelector('.fraction-input-wrapper') !== null;
+
+            if (keyValue === '-') {
+                if (!hasFraction && mainBox.innerText.trim() === '') {
+                    mainBox.innerText = '-';
+                } else if (hasFraction) {
+                    if (!mainBox.querySelector('.fraction-side-minus')) {
+                        const minusNode = document.createElement('span');
+                        minusNode.className = 'fraction-side-minus';
+                        minusNode.innerText = '−';
+                        mainBox.insertBefore(minusNode, mainBox.firstChild);
+                    } else {
+                        mainBox.querySelector('.fraction-side-minus').remove();
+                    }
+                }
+                return;
+            }
+
+            if (keyValue === 'FRACTION') {
+                if (!hasFraction) {
+                    let baselineText = mainBox.innerText.trim();
+                    let leadingMinusHtml = '';
+                    if (baselineText.startsWith('-') || baselineText.startsWith('−')) {
+                        leadingMinusHtml = `<span class="fraction-side-minus">−</span>`;
+                        baselineText = baselineText.substring(1);
+                    }
+                    mainBox.innerHTML = `
+                        ${leadingMinusHtml}
+                        <div class="fraction-input-wrapper">
+                            <div class="fraction-input-subbox focused-sub" data-sub="num">${baselineText}</div>
+                            <div class="fraction-input-line"></div>
+                            <div class="fraction-input-subbox" data-sub="den"></div>
+                        </div>
+                    `;
+                    activeTextTarget = mainBox.querySelector('[data-sub="num"]');
+                }
+                return;
+            }
+
+            if (keyValue === 'BACKSPACE') {
+                if (hasFraction) {
+                    const currentString = activeTextTarget.innerText.trim();
+                    if (currentString.length > 0) {
+                        activeTextTarget.innerText = currentString.substring(0, currentString.length - 1);
+                    } else {
+                        let recoveryValue = mainBox.querySelector('.fraction-side-minus') ? '-' : '';
+                        mainBox.innerHTML = '';
+                        mainBox.innerText = recoveryValue;
+                        activeTextTarget = mainBox;
+                    }
+                } else {
+                    let txt = mainBox.innerText;
+                    if (txt.length > 0) mainBox.innerText = txt.substring(0, txt.length - 1);
+                }
+                return;
+            }
+
+            if (keyValue === 'CLEAR') {
+                mainBox.innerHTML = '';
+                mainBox.innerText = '';
+                activeTextTarget = mainBox;
+                return;
+            }
+
+            let currentString = activeTextTarget.innerText;
+            if (currentString.length < 7) {
+                activeTextTarget.innerText = currentString + keyValue;
+            }
+        }
+
+        // ==========================================
+        // DYNAMIC CONSTRAINED CANVAS ENGINE
+        // ==========================================
+        
+        let drawingActive = false;
+        let currentBrushMode = 'interact'; 
+
+        // Set up the toolbar event listeners ONCE to prevent duplicate logic/highlight issues
+        function initToolbarListeners() {
+            const btnInteract = document.getElementById('tool-interact');
+            const btnPen = document.getElementById('tool-pen');
+            const btnEraser = document.getElementById('tool-eraser');
+            const btnClear = document.getElementById('tool-clear');
+
+            function resetToolButtons() {
+                btnInteract.classList.remove('active');
+                btnPen.classList.remove('active');
+                btnEraser.classList.remove('active');
+            }
+
+            btnInteract.addEventListener('click', () => {
+                resetToolButtons();
+                btnInteract.classList.add('active');
+                currentBrushMode = 'interact';
+                const cvs = document.getElementById('drawingCanvas');
+                if (cvs) cvs.style.pointerEvents = 'none';
+            });
+
+            btnPen.addEventListener('click', () => {
+                resetToolButtons();
+                btnPen.classList.add('active');
+                currentBrushMode = 'pen';
+                const cvs = document.getElementById('drawingCanvas');
+                if (cvs) cvs.style.pointerEvents = 'auto';
+            });
+
+            btnEraser.addEventListener('click', () => {
+                resetToolButtons();
+                btnEraser.classList.add('active');
+                currentBrushMode = 'eraser';
+                const cvs = document.getElementById('drawingCanvas');
+                if (cvs) cvs.style.pointerEvents = 'auto';
+            });
+
+            btnClear.addEventListener('click', () => {
+                const cvs = document.getElementById('drawingCanvas');
+                if (cvs) {
+                    const ctx = cvs.getContext('2d');
+                    ctx.clearRect(0, 0, cvs.width, cvs.height);
+                }
+            });
+        }
+
+        // Dynamically inject and confine the canvas over the generated diagram ONLY
+        function initCanvasEngine() {
+            const diagramContainer = document.querySelector('.interactive-diagram');
+            if (!diagramContainer) return;
+
+            let canvas = document.getElementById('drawingCanvas');
+            if (canvas) canvas.remove();
+
+            canvas = document.createElement('canvas');
+            canvas.id = 'drawingCanvas';
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '10';
+            canvas.style.touchAction = 'none';
+            
+            if (currentBrushMode === 'interact') {
+                canvas.style.pointerEvents = 'none';
+            } else {
+                canvas.style.pointerEvents = 'auto';
+            }
+
+            diagramContainer.style.position = 'relative';
+            diagramContainer.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            
+            // Set 1:1 hardware pixel bounds
+            canvas.width = diagramContainer.clientWidth;
+            canvas.height = diagramContainer.clientHeight;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+// Prevent multi-touch browser zoom and panning gestures on the canvas
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Ignore non-primary touches (secondary fingers) for drawing actions
+            canvas.addEventListener('pointerdown', (e) => {
+                if (!e.isPrimary) return;
+                if (currentBrushMode === 'interact') return;
+                drawingActive = true;
+                ctx.beginPath();
+                const rect = canvas.getBoundingClientRect();
+                ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+                configureContextStrokeWeight(e, ctx);
+            });
+
+            canvas.addEventListener('pointermove', (e) => {
+                if (!e.isPrimary) return;
+                if (!drawingActive || currentBrushMode === 'interact') return;
+                configureContextStrokeWeight(e, ctx);
+                const rect = canvas.getBoundingClientRect();
+                ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                ctx.stroke();
+            });
+
+            canvas.addEventListener('pointerup', (e) => {
+                if (!e.isPrimary) return;
+                drawingActive = false;
+                ctx.closePath();
+            });
+            
+            canvas.addEventListener('pointercancel', (e) => {
+                if (!e.isPrimary) return;
+                drawingActive = false;
+                ctx.closePath();
+            });
+        }
+
+        function configureContextStrokeWeight(e, ctx) {
+            let normalizedPressureWeight = 1.0;
+            if (e.pressure && e.pointerType === 'pen') {
+                normalizedPressureWeight = e.pressure * 2.2;
+            }
+            if (currentBrushMode === 'pen') {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = '#d24726';
+                ctx.lineWidth = 2.0 * normalizedPressureWeight + 1.0;
+            } else if (currentBrushMode === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.lineWidth = 36.0; 
+            }
+        }
+    </script>
+</body>
+</html>
